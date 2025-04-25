@@ -5,6 +5,7 @@ import { configCache } from './ConfigCache';
 import IncludeTreeDataProvider from './TreeView/IncludeTreeDataProvider';
 import { Commands, Constants } from './Constants';
 import { ExtensionMode } from './ConfigAccess';
+import { includeTreeGlobals } from './Globals';
 
 
 function onConfigChange() {
@@ -14,7 +15,10 @@ function onConfigChange() {
 
 function onEditorChange() {
 	if (configCache.extensionMode === ExtensionMode.AUTOMATIC) {
+		const allowedLanguages: string[] = ['c', 'cpp'];
 		if (!vscode.window.activeTextEditor) { return; }
+		if (!vscode.window.activeTextEditor.document) { return; }
+		if (!allowedLanguages.includes(vscode.window.activeTextEditor.document.languageId)) { return; }
 		vscode.commands.executeCommand(Commands.UPDATE, vscode.window.activeTextEditor.document.uri);
 	}
 }
@@ -23,8 +27,10 @@ function onEditorChange() {
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	vscode.workspace.onDidChangeConfiguration(onConfigChange);
+	includeTreeGlobals.outputChannel = vscode.window.createOutputChannel(`${Constants.EXTENSION_NAME}`);
 	const includeTreeDataProvider = new IncludeTreeDataProvider();
+
+	vscode.workspace.onDidChangeConfiguration(onConfigChange);
 	vscode.window.registerTreeDataProvider(Constants.EXTENSION_NAME + '.includeTree', includeTreeDataProvider);
 	vscode.commands.registerCommand(Commands.UPDATE, async (fileUri: vscode.Uri) => {
 		const compiler = configCache.compiler;

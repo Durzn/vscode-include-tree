@@ -13,7 +13,7 @@ export default class ConfigAccess {
     }
 
     public getCompilerPath(): string {
-        return this.getConfiguration().get("compilerUri", "");
+        return this.getConfiguration().get("compilerPath", "");
     }
 
     public getExtensionMode(): ExtensionMode {

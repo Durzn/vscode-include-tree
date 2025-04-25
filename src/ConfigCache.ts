@@ -1,5 +1,5 @@
 import ConfigAccess, { ExtensionMode } from './ConfigAccess';
-import { Compiler, Gcc } from './Compilers';
+import { Clang, Compiler, Dummy, Gcc } from './Compilers';
 
 export default class ConfigCache {
 
@@ -25,8 +25,14 @@ export default class ConfigCache {
 }
 
 function getCompilerFromPath(path: string) {
-    /* Only support Gcc for now */
-    return new Gcc(path);
+    if (path.includes("clang++.exe") || path === "clang++" || path.includes("clang.exe") || path === "clang") {
+        return new Clang(path);
+    }
+    else if (path.includes("g++.exe") || path === "g++" || path.includes("gcc.exe") || path === "gcc") {
+        return new Gcc(path);
+    }
+
+    return new Dummy(path);
 }
 
 var configCache: ConfigCache = new ConfigCache();
