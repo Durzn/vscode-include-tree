@@ -11,7 +11,7 @@
   "license": "MIT",
   "publisher": "durzn",
   "repository": {
-    "directory": ""
+    "url": "https://github.com/Durzn/vscode-include-tree"
   },
   "engines": {
     "vscode": "^1.99.0"
