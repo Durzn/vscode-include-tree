@@ -1,5 +1,10 @@
 import * as vscode from 'vscode';
 
+export enum ExtensionMode {
+    MANUAL = "manual",
+    AUTOMATIC = "automatic"
+}
+
 export default class ConfigAccess {
     constructor() { }
 
@@ -7,10 +12,18 @@ export default class ConfigAccess {
         return vscode.workspace.getConfiguration("include-tree", null);
     }
 
-    public getCompilerUri(): vscode.Uri {
+    public getCompilerPath(): string {
+        return this.getConfiguration().get("compilerUri", "");
+    }
+
+    public getExtensionMode(): ExtensionMode {
         const config = this.getConfiguration();
-        let compilerPath: string = config.get("compilerUri", "");
-        return vscode.Uri.file(compilerPath);
+        let extensionMode: string = config.get("extensionMode", ExtensionMode.AUTOMATIC);
+        return <ExtensionMode>extensionMode;
+    }
+
+    public getMaxIncludeDepth(): number {
+        return this.getConfiguration().get("includeDepth", 20);
     }
 }
 

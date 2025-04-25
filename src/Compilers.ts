@@ -1,49 +1,57 @@
+import { configCache } from "./ConfigCache";
 import Include from "./Include";
 import IncludeTree from "./IncludeTree";
 import * as vscode from 'vscode';
 
-const { execFile } = require('child_process');
+const { spawn } = require('child_process');
 
 export interface Compiler {
-    buildTree(fileUri: vscode.Uri): Promise<IncludeTree>;
+    buildTree(fileUri: vscode.Uri): Promise<IncludeTree | undefined>;
 }
 
 export class Gcc implements Compiler {
-    constructor(private compilerUri: vscode.Uri) {
+    constructor(private compilerPath: string) { }
 
-    }
+    async buildTree(fileUri: vscode.Uri): Promise<IncludeTree | undefined> {
+        return new Promise((resolve, reject) => {
+            const stack: { depth: number; node: Include }[] = [];
+            const rootNodes: Include[] = [];
+            let output = "";
+            const prog = spawn(this.compilerPath, [`-fmax-include-depth=${configCache.maxIncludeDepth}`, "-fsyntax-only", "-H", fileUri.fsPath]);
 
-    async buildTree(fileUri: vscode.Uri): Promise<IncludeTree> {
-        const stack: { depth: number; node: Include }[] = [];
-        const rootNodes: Include[] = [];
-        const { stdout, stderr } = await execFile(this.compilerUri.fsPath, ["-H", fileUri.fsPath]);
-        const lines = stdout.split('\n');
+            prog.stderr.on('data', (data: any) => {
+                output += data.toString(); /* GCC outputs its output to stderr for whatever reason */
+            });
 
-        for (const line of lines) {
-            const match = line.match(/^(\.+)(.+)$/);
-            if (!match) { continue; };
+            prog.on('close', (code: number) => {
+                if (output === '') { return resolve(undefined); }
+                const eolCharacter = process.platform === 'win32' ? "\r\n" : "\n";
+                const lines = output.split(eolCharacter);
+                for (const line of lines) {
+                    const match = line.match(/^(\.+)(.+)$/);
+                    if (!match) { continue; };
 
-            const depth = match[1].length;
-            const name = match[2].trim();
+                    const depth = match[1].length;
+                    const name = match[2].trim();
 
-            const node: Include = new Include(name, []);
+                    const node: Include = new Include(vscode.Uri.file(name), []);
 
-            // Clean up stack to match current depth
-            while (stack.length > 0 && stack[stack.length - 1].depth >= depth) {
-                stack.pop();
-            }
+                    // Clean up stack to match current depth
+                    while (stack.length > 0 && stack[stack.length - 1].depth >= depth) {
+                        stack.pop();
+                    }
 
-            if (stack.length === 0) {
-                rootNodes.push(node);
-            } else {
-                stack[stack.length - 1].node.includes.push(node);
-            }
+                    if (stack.length === 0) {
+                        rootNodes.push(node);
+                    } else {
+                        stack[stack.length - 1].node.includes.push(node);
+                    }
 
-            stack.push({ depth, node });
-        }
+                    stack.push({ depth, node });
+                }
 
-        return Promise.resolve(new IncludeTree(rootNodes));
-
-
+                return resolve(new IncludeTree(rootNodes));
+            });
+        });
     }
 }

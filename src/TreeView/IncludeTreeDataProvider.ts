@@ -3,7 +3,7 @@ import IncludeTree from '../IncludeTree';
 import Include from '../Include';
 import IncludeTreeItem from './IncludeTreeItem';
 
-export default class NodeDependenciesProvider implements vscode.TreeDataProvider<IncludeTreeItem> {
+export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<IncludeTreeItem> {
     constructor(private includeTree: IncludeTree | undefined = undefined) { }
 
     getTreeItem(element: IncludeTreeItem): vscode.TreeItem {
@@ -21,12 +21,18 @@ export default class NodeDependenciesProvider implements vscode.TreeDataProvider
             }
         }
         for (let include of includes) {
-            elements.push(new IncludeTreeItem(include, include.fileName));
+            let collapsibleState = include.includes.length === 0 ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Expanded;
+            elements.push(new IncludeTreeItem(include, include.getFileName(), {
+                'title': "Open file",
+                'command': "include-tree.open",
+                'tooltip': "Open file",
+                'arguments': [include.getAbsolutePath()]
+            }, vscode.ThemeIcon.File, vscode.Uri.file(include.getAbsolutePath()), collapsibleState));
         }
         return Promise.resolve(elements);
     }
 
-    public setIncludeTree(includeTree: IncludeTree) {
+    public setIncludeTree(includeTree: IncludeTree | undefined) {
         this.includeTree = includeTree;
         this.refresh();
     }
@@ -37,5 +43,4 @@ export default class NodeDependenciesProvider implements vscode.TreeDataProvider
     refresh(): void {
         this._onDidChangeTreeData.fire();
     }
-
 }

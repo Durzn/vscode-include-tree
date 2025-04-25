@@ -1,6 +1,5 @@
-import ConfigAccess from './ConfigAccess';
+import ConfigAccess, { ExtensionMode } from './ConfigAccess';
 import { Compiler, Gcc } from './Compilers';
-import * as vscode from 'vscode';
 
 export default class ConfigCache {
 
@@ -8,6 +7,8 @@ export default class ConfigCache {
 
     /* Config parameters */
     public compiler!: Compiler;
+    public extensionMode!: ExtensionMode;
+    public maxIncludeDepth!: number;
 
 
     constructor() {
@@ -17,13 +18,15 @@ export default class ConfigCache {
 
     public onConfigChange() {
         /* Config parameters */
-        this.compiler = getCompilerFromUri(this.configAccess.getCompilerUri());
+        this.compiler = getCompilerFromPath(this.configAccess.getCompilerPath());
+        this.extensionMode = this.configAccess.getExtensionMode();
+        this.maxIncludeDepth = this.configAccess.getMaxIncludeDepth();
     }
 }
 
-function getCompilerFromUri(uri: vscode.Uri) {
+function getCompilerFromPath(path: string) {
     /* Only support Gcc for now */
-    return new Gcc(uri);
+    return new Gcc(path);
 }
 
 var configCache: ConfigCache = new ConfigCache();

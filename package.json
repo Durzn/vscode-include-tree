@@ -12,19 +12,43 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
-    "properties": {
-      "include-tree.compilerUri": {
-        "type": "string",
-        "description": "Full path to the compiler executable.",
-        "scope": "resource"
+    "viewsWelcome": [
+      {
+        "view": "include-tree.includeTree",
+        "contents": "No includes found for the current file."
       }
-    },
+    ],
+    "configuration": [
+      {
+        "title": "IncludeTree",
+        "properties": {
+          "include-tree.extensionMode": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "automatic"
+            ],
+            "default": "automatic",
+            "description": "Mode to operate on. Automatic (default) shows the include tree of the currently active file in the editor. Manual always shows the tree explicitly requested by the user (via context menu in the file browser)."
+          },
+          "include-tree.compilerPath": {
+            "type": "string",
+            "description": "Full path to the compiler executable.",
+            "scope": "resource"
+          },
+          "include-tree.maxIncludeDepth": {
+            "type": "integer",
+            "description": "The max include depth to scan. Beware of circular inclusions.",
+            "default": 20
+          }
+        }
+      }
+    ],
     "menus": {
-      "view/title": [
+      "explorer/context": [
         {
-          "command": "include-tree.refresh",
-          "when": "view == includeTree",
-          "group": "navigation"
+          "command": "include-tree.update",
+          "when": "include-tree.extensionMode != automatic"
         }
       ]
     },
@@ -39,16 +63,8 @@
     },
     "commands": [
       {
-        "command": "include-tree.refresh",
-        "title": "Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
         "command": "include-tree.update",
-        "title": "Update Include Tree",
+        "title": "Show Include Tree",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
