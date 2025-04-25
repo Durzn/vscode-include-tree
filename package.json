@@ -1,13 +1,31 @@
 {
   "name": "include-tree",
-  "displayName": "include-tree",
-  "description": "",
-  "version": "0.0.1",
+  "displayName": "Include Tree",
+  "description": "Extension to visualize the include tree of given files.",
+  "version": "1.0.0",
+  "author": {
+    "name": "durzn",
+    "email": "dev@durzn.com"
+  },
+  "icon": "assets/icon.png",
+  "license": "MIT",
+  "publisher": "durzn",
+  "repository": {
+    "directory": ""
+  },
   "engines": {
     "vscode": "^1.99.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "Include",
+    "Tree",
+    "C",
+    "C++",
+    "Compiler"
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",
@@ -33,8 +51,7 @@
           },
           "include-tree.compilerPath": {
             "type": "string",
-            "description": "Full path to the compiler executable.",
-            "scope": "resource"
+            "description": "Full path to the compiler executable. Alternative: Use the compiler name (e.g. gcc), so the first occurrence in the path is taken."
           },
           "include-tree.maxIncludeDepth": {
             "type": "integer",
@@ -48,7 +65,7 @@
       "explorer/context": [
         {
           "command": "include-tree.update",
-          "when": "include-tree.extensionMode != automatic"
+          "when": "include-tree.extensionMode == manual"
         }
       ]
     },

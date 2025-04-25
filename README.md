@@ -1,71 +1,40 @@
 # include-tree README
 
-This is the README for your extension "include-tree". After writing up a brief description, we recommend including the following sections.
+Extension to visualize the include tree of files.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- Get a tree view with the include tree of either your open text files or of specifically chosen files
+- Clicking on a file in the Include Tree will open the file
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+| Example                    | Description                               |
+| -------------------------- | ----------------------------------------- |
+|![](assets/example.png)     | Show include graph of a file              |
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+You must have a compiler (currently: gcc, g++, clang, clang++) installed and its path or its name must be set in the settings.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+| Setting                                               | Description                                                                                                                                                                                                      |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `include-tree.extensionMode`                          | Mode to operate on. Automatic (default) shows the include tree of the currently active file in the editor. Manual always shows the tree explicitly requested by the user (via context menu in the file browser). |
+| `include-tree.compilerPath`                           | Full path to the compiler executable. Alternative: Use the compiler name (e.g. gcc), so the first occurrence in the path is taken.                                                                               |
+| `include-tree.maxIncludeDepth`                        | The max include depth to scan. Beware of circular inclusions.                                                                                                                                                    |
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+None so far.
 
-## Release Notes
+# Feature requests and bug reports
+Please mail them to me at dev@durzn.com or create an issue in GitHub.
 
-Users appreciate release notes as you update your extension.
+# Support
+I'm working on projects like this extension in my free time. 
+If you want to buy me a coffee to keep me awake for more work on my projects, I'd greatly appreciate it.
 
-### 1.0.0
+<a href='https://ko-fi.com/H2H4Q3C6N' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+I also gladly accept ``Ada`` over this address: ``addr1qyz4hp9a5m844c5dn7nz56vget0lcx2lxg9eg02x9nyg82m7306tyvjqygl08grv79tm2jw0sh9lg8nr5u0g0qvf2nlsw376z4``
