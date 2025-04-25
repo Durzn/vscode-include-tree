@@ -72,7 +72,6 @@
     "views": {
       "explorer": [
         {
-          "icon": "",
           "id": "include-tree.includeTree",
           "name": "Include Tree"
         }
