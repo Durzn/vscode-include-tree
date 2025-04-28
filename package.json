@@ -77,6 +77,13 @@
           "command": "include-tree.show",
           "when": "include-tree.extensionMode == manual"
         }
+      ],
+      "view/title": [
+        {
+          "command": "include-tree.scanWorkspace",
+          "when": "view == include-tree.includeTree",
+          "group": "navigation"
+        }
       ]
     },
     "views": {
@@ -90,19 +97,12 @@
     "commands": [
       {
         "command": "include-tree.show",
-        "title": "Show Include Tree",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
+        "title": "Show Include Tree"
       },
       {
         "command": "include-tree.scanWorkspace",
         "title": "Scan directories of the current workspace",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
+        "icon": "$(extensions-refresh)"
       }
     ]
   },
