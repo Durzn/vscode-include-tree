@@ -3,5 +3,6 @@ export enum Constants {
 }
 
 export enum Commands {
-    UPDATE = Constants.EXTENSION_NAME + '.update'
+    SHOW = Constants.EXTENSION_NAME + '.show',
+    SCAN = Constants.EXTENSION_NAME + '.scanWorkspace'
 }

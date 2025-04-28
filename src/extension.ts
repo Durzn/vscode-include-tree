@@ -1,5 +1,3 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { configCache } from './ConfigCache';
 import IncludeTreeDataProvider from './TreeView/IncludeTreeDataProvider';
@@ -12,6 +10,7 @@ async function scanWorkspace() {
 	let workspaceFolders = vscode.workspace.workspaceFolders;
 	let foldersInWorkspaces: string[] = [];
 	if (!workspaceFolders) { return foldersInWorkspaces; };
+
 	for (let workspace of workspaceFolders) {
 		for await (const file of FileSystemHandler.getFolders(workspace.uri)) {
 			foldersInWorkspaces.push(file.fsPath);
@@ -22,11 +21,10 @@ async function scanWorkspace() {
 }
 
 
-async function onConfigChange() {
+async function onConfigChange(event: vscode.ConfigurationChangeEvent) {
 	configCache.onConfigChange();
 
 	/* Always scan for now */
-	includeTreeGlobals.workspaceIncludes = await scanWorkspace();
 	vscode.commands.executeCommand('setContext', Constants.EXTENSION_NAME + '.extensionMode', configCache.extensionMode.toString());
 }
 
@@ -36,20 +34,27 @@ function onEditorChange() {
 		if (!vscode.window.activeTextEditor) { return; }
 		if (!vscode.window.activeTextEditor.document) { return; }
 		if (!allowedLanguages.includes(vscode.window.activeTextEditor.document.languageId)) { return; }
-		vscode.commands.executeCommand(Commands.UPDATE, vscode.window.activeTextEditor.document.uri);
+		vscode.commands.executeCommand(Commands.SHOW, vscode.window.activeTextEditor.document.uri);
 	}
 }
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+async function onStartup() {
+	await vscode.commands.executeCommand(Commands.SCAN, Constants.EXTENSION_NAME + '.extensionMode', configCache.extensionMode.toString());
+	onEditorChange();
+}
+
 export function activate(context: vscode.ExtensionContext) {
 
 	includeTreeGlobals.outputChannel = vscode.window.createOutputChannel(`${Constants.EXTENSION_NAME}`);
 	const includeTreeDataProvider = new IncludeTreeDataProvider();
 
-	vscode.workspace.onDidChangeConfiguration(onConfigChange);
+	vscode.workspace.onDidChangeConfiguration((event: vscode.ConfigurationChangeEvent) => {
+		if (event.affectsConfiguration(Constants.EXTENSION_NAME)) {
+			onConfigChange(event);
+		}
+	});
 	vscode.window.registerTreeDataProvider(Constants.EXTENSION_NAME + '.includeTree', includeTreeDataProvider);
-	vscode.commands.registerCommand(Commands.UPDATE, async (fileUri: vscode.Uri) => {
+	vscode.commands.registerCommand(Commands.SHOW, async (fileUri: vscode.Uri) => {
 		const compiler = configCache.compiler;
 		const includeTree = await compiler.buildTree(fileUri, includeTreeGlobals.workspaceIncludes.concat(configCache.additionalIncludes));
 		includeTreeDataProvider.setIncludeTree(includeTree);
@@ -57,12 +62,15 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand(Constants.EXTENSION_NAME + '.open', (filePath: string) => {
 		vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePath));
 	});
+	vscode.commands.registerCommand(Commands.SCAN, async () => {
+		includeTreeGlobals.workspaceIncludes = await scanWorkspace();
+	});
 
 	vscode.window.onDidChangeActiveTextEditor(onEditorChange);
 	vscode.workspace.onDidSaveTextDocument(onEditorChange);
 
 	/* Trigger extension on startup */
-	onEditorChange();
+	onStartup();
 }
 
 // This method is called when your extension is deactivated

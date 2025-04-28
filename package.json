@@ -74,7 +74,7 @@
     "menus": {
       "explorer/context": [
         {
-          "command": "include-tree.update",
+          "command": "include-tree.show",
           "when": "include-tree.extensionMode == manual"
         }
       ]
@@ -89,8 +89,16 @@
     },
     "commands": [
       {
-        "command": "include-tree.update",
+        "command": "include-tree.show",
         "title": "Show Include Tree",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "include-tree.scanWorkspace",
+        "title": "Scan directories of the current workspace",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
