@@ -2,7 +2,7 @@
   "name": "include-tree",
   "displayName": "Include Tree",
   "description": "Extension to visualize the include tree of given files.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "durzn",
     "email": "dev@durzn.com"
@@ -65,7 +65,7 @@
           },
           "include-tree.additionalIncludes": {
             "type": "array",
-            "description": "Includes paths to scan for header locations.",
+            "description": "Includes paths to scan for header locations. Must be absolute paths.",
             "default": []
           }
         }
