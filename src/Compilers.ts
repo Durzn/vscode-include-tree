@@ -35,9 +35,11 @@ export class Gcc implements Compiler {
                 includeStrings.push(`-I${includeUri}`);
             }
 
-            includeTreeGlobals.outputChannel?.append(`${this.compilerPath} -fmax-include-depth=${configCache.maxIncludeDepth} -fsyntax-only ${includeStrings.join(" ")} -H ${fileUri.fsPath} ${eolCharacter}`);
+            let cmdString = `${this.compilerPath} -fmax-include-depth=${configCache.maxIncludeDepth} -fsyntax-only ${includeStrings.join(" ")} -H ${fileUri.fsPath}`;
 
-            const prog = spawn(this.compilerPath, [`-fmax-include-depth=${configCache.maxIncludeDepth}`, "-fsyntax-only", `${includeStrings.join(" ")}`, "-H", fileUri.fsPath]);
+            includeTreeGlobals.outputChannel?.append(`${cmdString} ${eolCharacter}`);
+
+            const prog = spawn(cmdString, [], { shell: true });
 
             prog.stderr.on('data', (data: any) => {
                 output += data.toString(); /* GCC outputs its output to stderr for whatever reason */
@@ -97,9 +99,11 @@ export class Clang implements Compiler {
                 includeStrings.push(`-I${includeUri}`);
             }
 
-            includeTreeGlobals.outputChannel?.append(`${this.compilerPath} ${includeStrings.join(" ")} -fsyntax-only -H ${fileUri.fsPath} ${eolCharacter}`);
+            const cmdString = `${this.compilerPath} -fsyntax-only ${includeStrings.join(" ")} -H ${fileUri.fsPath}`;
 
-            const prog = spawn(this.compilerPath, [`${includeStrings.join(" ")}`, "-fsyntax-only", "-H", fileUri.fsPath]);
+            includeTreeGlobals.outputChannel?.append(`${cmdString} ${eolCharacter}`);
+
+            const prog = spawn(cmdString, [], { shell: true });
 
             prog.stderr.on('data', (data: any) => {
                 output += data.toString(); /* GCC outputs its output to stderr for whatever reason */
