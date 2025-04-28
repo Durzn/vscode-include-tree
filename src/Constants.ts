@@ -6,3 +6,7 @@ export enum Commands {
     SHOW = Constants.EXTENSION_NAME + '.show',
     SCAN = Constants.EXTENSION_NAME + '.scanWorkspace'
 }
+
+export enum Settings {
+    SCANWORKSPACE = Constants.EXTENSION_NAME + '.scanWorkspaceForIncludes'
+}
