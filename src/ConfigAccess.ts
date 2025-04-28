@@ -25,6 +25,14 @@ export default class ConfigAccess {
     public getMaxIncludeDepth(): number {
         return this.getConfiguration().get("includeDepth", 20);
     }
+
+    public getScanWorkspaceForIncludes(): boolean {
+        return this.getConfiguration().get("scanWorkspaceForIncludes", true);
+    }
+
+    public getAdditionalIncludes(): string[] {
+        return this.getConfiguration().get("additionalIncludes", []);
+    }
 }
 
 export { ConfigAccess };

@@ -57,6 +57,16 @@
             "type": "integer",
             "description": "The max include depth to scan. Beware of circular inclusions.",
             "default": 20
+          },
+          "include-tree.scanWorkspaceForIncludes": {
+            "type": "boolean",
+            "description": "Whether to automatically include all headers present in the vscode workspace.",
+            "default": true
+          },
+          "include-tree.additionalIncludes": {
+            "type": "array",
+            "description": "Includes paths to scan for header locations.",
+            "default": []
           }
         }
       }

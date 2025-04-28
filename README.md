@@ -18,6 +18,7 @@ You must have a compiler (currently: gcc, g++, clang, clang++) installed and its
 ## Extension Settings
 
 This extension contributes the following settings:
+
 | Setting                                               | Description                                                                                                                                                                                                      |
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `include-tree.extensionMode`                          | Mode to operate on. Automatic (default) shows the include tree of the currently active file in the editor. Manual always shows the tree explicitly requested by the user (via context menu in the file browser). |

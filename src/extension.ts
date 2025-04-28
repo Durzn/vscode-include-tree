@@ -6,10 +6,27 @@ import IncludeTreeDataProvider from './TreeView/IncludeTreeDataProvider';
 import { Commands, Constants } from './Constants';
 import { ExtensionMode } from './ConfigAccess';
 import { includeTreeGlobals } from './Globals';
+import { FileSystemHandler } from './Util/FileSystemHandler';
+
+async function scanWorkspace() {
+	let workspaceFolders = vscode.workspace.workspaceFolders;
+	let foldersInWorkspaces: string[] = [];
+	if (!workspaceFolders) { return foldersInWorkspaces; };
+	for (let workspace of workspaceFolders) {
+		for await (const file of FileSystemHandler.getFolders(workspace.uri)) {
+			foldersInWorkspaces.push(file.fsPath);
+		}
+	}
+
+	return foldersInWorkspaces;
+}
 
 
-function onConfigChange() {
+async function onConfigChange() {
 	configCache.onConfigChange();
+
+	/* Always scan for now */
+	includeTreeGlobals.workspaceIncludes = await scanWorkspace();
 	vscode.commands.executeCommand('setContext', Constants.EXTENSION_NAME + '.extensionMode', configCache.extensionMode.toString());
 }
 
@@ -34,7 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.window.registerTreeDataProvider(Constants.EXTENSION_NAME + '.includeTree', includeTreeDataProvider);
 	vscode.commands.registerCommand(Commands.UPDATE, async (fileUri: vscode.Uri) => {
 		const compiler = configCache.compiler;
-		const includeTree = await compiler.buildTree(fileUri);
+		const includeTree = await compiler.buildTree(fileUri, includeTreeGlobals.workspaceIncludes.concat(configCache.additionalIncludes));
 		includeTreeDataProvider.setIncludeTree(includeTree);
 	});
 	vscode.commands.registerCommand(Constants.EXTENSION_NAME + '.open', (filePath: string) => {

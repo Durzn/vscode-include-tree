@@ -7,12 +7,12 @@ import * as vscode from 'vscode';
 const { spawn } = require('child_process');
 
 export interface Compiler {
-    buildTree(fileUri: vscode.Uri): Promise<IncludeTree | undefined>;
+    buildTree(fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined>;
 }
 export class Dummy implements Compiler {
     constructor(private compilerPath: string) { }
 
-    async buildTree(fileUri: vscode.Uri): Promise<IncludeTree | undefined> {
+    async buildTree(fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined> {
         return undefined;
     }
 }
@@ -20,17 +20,24 @@ export class Dummy implements Compiler {
 export class Gcc implements Compiler {
     constructor(private compilerPath: string) { }
 
-    async buildTree(fileUri: vscode.Uri): Promise<IncludeTree | undefined> {
+    async buildTree(fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined> {
         return new Promise((resolve, reject) => {
             const stack: { depth: number; node: Include }[] = [];
             const rootNodes: Include[] = [];
             let output = "";
+            const eolCharacter = process.platform === 'win32' ? "\r\n" : "\n";
 
             includeTreeGlobals.outputChannel?.clear();
 
-            includeTreeGlobals.outputChannel?.append(`${this.compilerPath} -fmax-include-depth=${configCache.maxIncludeDepth} -fsyntax-only -H ${fileUri.fsPath}`);
+            let includeStrings = [];
 
-            const prog = spawn(this.compilerPath, [`-fmax-include-depth=${configCache.maxIncludeDepth}`, "-fsyntax-only", "-H", fileUri.fsPath]);
+            for (let includeUri of additionalIncludeUris) {
+                includeStrings.push(`-I${includeUri}`);
+            }
+
+            includeTreeGlobals.outputChannel?.append(`${this.compilerPath} -fmax-include-depth=${configCache.maxIncludeDepth} -fsyntax-only ${includeStrings.join(" ")} -H ${fileUri.fsPath} ${eolCharacter}`);
+
+            const prog = spawn(this.compilerPath, [`-fmax-include-depth=${configCache.maxIncludeDepth}`, "-fsyntax-only", `${includeStrings.join(" ")}`, "-H", fileUri.fsPath]);
 
             prog.stderr.on('data', (data: any) => {
                 output += data.toString(); /* GCC outputs its output to stderr for whatever reason */
@@ -41,7 +48,6 @@ export class Gcc implements Compiler {
 
                 includeTreeGlobals.outputChannel?.append(output);
 
-                const eolCharacter = process.platform === 'win32' ? "\r\n" : "\n";
                 const lines = output.split(eolCharacter);
                 for (const line of lines) {
                     const match = line.match(/^(\.+)(.+)$/);
@@ -75,17 +81,25 @@ export class Gcc implements Compiler {
 export class Clang implements Compiler {
     constructor(private compilerPath: string) { }
 
-    async buildTree(fileUri: vscode.Uri): Promise<IncludeTree | undefined> {
+    async buildTree(fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined> {
         return new Promise((resolve, reject) => {
             const stack: { depth: number; node: Include }[] = [];
             const rootNodes: Include[] = [];
             let output = "";
 
+            const eolCharacter = process.platform === 'win32' ? "\r\n" : "\n";
+
             includeTreeGlobals.outputChannel?.clear();
 
-            includeTreeGlobals.outputChannel?.append(`${this.compilerPath} -fsyntax-only -H ${fileUri.fsPath}`);
+            let includeStrings = [];
 
-            const prog = spawn(this.compilerPath, ["-fsyntax-only", "-H", fileUri.fsPath]);
+            for (let includeUri of additionalIncludeUris) {
+                includeStrings.push(`-I${includeUri}`);
+            }
+
+            includeTreeGlobals.outputChannel?.append(`${this.compilerPath} ${includeStrings.join(" ")} -fsyntax-only -H ${fileUri.fsPath} ${eolCharacter}`);
+
+            const prog = spawn(this.compilerPath, [`${includeStrings.join(" ")}`, "-fsyntax-only", "-H", fileUri.fsPath]);
 
             prog.stderr.on('data', (data: any) => {
                 output += data.toString(); /* GCC outputs its output to stderr for whatever reason */
@@ -95,8 +109,6 @@ export class Clang implements Compiler {
                 if (output === '') { return resolve(undefined); }
 
                 includeTreeGlobals.outputChannel?.append(output);
-
-                const eolCharacter = process.platform === 'win32' ? "\r\n" : "\n";
                 const lines = output.split(eolCharacter);
                 for (const line of lines) {
                     const match = line.match(/^(\.+)(.+)$/);

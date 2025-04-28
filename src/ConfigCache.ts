@@ -9,6 +9,8 @@ export default class ConfigCache {
     public compiler!: Compiler;
     public extensionMode!: ExtensionMode;
     public maxIncludeDepth!: number;
+    public scanWorkspaceForIncludes!: boolean;
+    public additionalIncludes!: string[];
 
 
     constructor() {
@@ -21,6 +23,8 @@ export default class ConfigCache {
         this.compiler = getCompilerFromPath(this.configAccess.getCompilerPath());
         this.extensionMode = this.configAccess.getExtensionMode();
         this.maxIncludeDepth = this.configAccess.getMaxIncludeDepth();
+        this.scanWorkspaceForIncludes = this.configAccess.getScanWorkspaceForIncludes();
+        this.additionalIncludes = this.configAccess.getAdditionalIncludes();
     }
 }
 
