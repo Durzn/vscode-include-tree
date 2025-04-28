@@ -24,6 +24,8 @@ This extension contributes the following settings:
 | `include-tree.extensionMode`                          | Mode to operate on. Automatic (default) shows the include tree of the currently active file in the editor. Manual always shows the tree explicitly requested by the user (via context menu in the file browser). |
 | `include-tree.compilerPath`                           | Full path to the compiler executable. Alternative: Use the compiler name (e.g. gcc), so the first occurrence in the path is taken.                                                                               |
 | `include-tree.maxIncludeDepth`                        | The max include depth to scan. Beware of circular inclusions.                                                                                                                                                    |
+| `include-tree.scanWorkspaceForIncludes`               | Whether to automatically include all headers present in the vscode workspace.                                                                                                                                    |
+| `include-tree.additionalIncludes`                     | Includes paths to scan for header locations.                                                                                                                                                                     |
 
 ## Known Issues
 
