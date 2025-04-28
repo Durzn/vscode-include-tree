@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { configCache } from './ConfigCache';
 import IncludeTreeDataProvider from './TreeView/IncludeTreeDataProvider';
-import { Commands, Constants } from './Constants';
+import { Commands, Constants, Settings } from './Constants';
 import { ExtensionMode } from './ConfigAccess';
 import { includeTreeGlobals } from './Globals';
 import { FileSystemHandler } from './Util/FileSystemHandler';
@@ -23,6 +23,16 @@ async function scanWorkspace() {
 
 async function onConfigChange(event: vscode.ConfigurationChangeEvent) {
 	configCache.onConfigChange();
+
+	if (event.affectsConfiguration(Settings.SCANWORKSPACE)) {
+		if (configCache.scanWorkspaceForIncludes) {
+			includeTreeGlobals.workspaceIncludes = await scanWorkspace();
+		}
+		else {
+			includeTreeGlobals.workspaceIncludes = [];
+		}
+		onEditorChange();
+	}
 
 	/* Always scan for now */
 	vscode.commands.executeCommand('setContext', Constants.EXTENSION_NAME + '.extensionMode', configCache.extensionMode.toString());
@@ -63,7 +73,9 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePath));
 	});
 	vscode.commands.registerCommand(Commands.SCAN, async () => {
-		includeTreeGlobals.workspaceIncludes = await scanWorkspace();
+		if (configCache.scanWorkspaceForIncludes) {
+			includeTreeGlobals.workspaceIncludes = await scanWorkspace();
+		}
 	});
 
 	vscode.window.onDidChangeActiveTextEditor(onEditorChange);
