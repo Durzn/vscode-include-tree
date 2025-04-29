@@ -34,7 +34,6 @@ async function onConfigChange(event: vscode.ConfigurationChangeEvent) {
 		onEditorChange();
 	}
 
-	/* Always scan for now */
 	vscode.commands.executeCommand('setContext', Constants.EXTENSION_NAME + '.extensionMode', configCache.extensionMode.toString());
 }
 
@@ -49,7 +48,7 @@ function onEditorChange() {
 }
 
 async function onStartup() {
-	await vscode.commands.executeCommand(Commands.SCAN, Constants.EXTENSION_NAME + '.extensionMode', configCache.extensionMode.toString());
+	await vscode.commands.executeCommand(Commands.SCAN);
 	onEditorChange();
 }
 
