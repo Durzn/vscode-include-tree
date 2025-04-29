@@ -12,7 +12,7 @@ async function scanWorkspace() {
 	if (!workspaceFolders) { return foldersInWorkspaces; };
 
 	for (let workspace of workspaceFolders) {
-		for await (const file of FileSystemHandler.getFolders(workspace.uri)) {
+		for await (const file of FileSystemHandler.getFolders(workspace.uri, ['.h', '.hpp', '.hxx', '.hh'])) {
 			foldersInWorkspaces.push(file.fsPath);
 		}
 	}
