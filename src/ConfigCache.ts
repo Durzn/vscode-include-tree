@@ -1,5 +1,5 @@
 import ConfigAccess, { ExtensionMode } from './ConfigAccess';
-import { Clang, Compiler, Dummy, Gcc } from './Compilers';
+import { Compiler, Dummy, GenericCompiler } from './Compilers';
 
 export default class ConfigCache {
 
@@ -11,7 +11,6 @@ export default class ConfigCache {
     public maxIncludeDepth!: number;
     public scanWorkspaceForIncludes!: boolean;
     public additionalIncludes!: string[];
-
 
     constructor() {
         this.configAccess = new ConfigAccess();
@@ -30,10 +29,10 @@ export default class ConfigCache {
 
 function getCompilerFromPath(path: string) {
     if (path.includes("clang++.exe") || path === "clang++" || path.includes("clang.exe") || path === "clang") {
-        return new Clang(path);
+        return new GenericCompiler(path);
     }
     else if (path.includes("g++.exe") || path === "g++" || path.includes("gcc.exe") || path === "gcc") {
-        return new Gcc(path);
+        return new GenericCompiler(path);
     }
 
     return new Dummy(path);
