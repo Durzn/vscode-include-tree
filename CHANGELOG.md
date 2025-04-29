@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2025-04-29
+
+- Removed usage of -fmax-include-depth flag for gcc
+
 ## [1.1.2] - 2025-04-29
 
 - Only use directories that have header files for additional include paths when scanning the workspace
