@@ -35,7 +35,7 @@ export class Gcc implements Compiler {
                 includeStrings.push(`-I${includeUri}`);
             }
 
-            let cmdString = `${this.compilerPath} -fmax-include-depth=${configCache.maxIncludeDepth} -fsyntax-only ${includeStrings.join(" ")} -H ${fileUri.fsPath}`;
+            let cmdString = `${this.compilerPath} -fsyntax-only ${includeStrings.join(" ")} -H ${fileUri.fsPath}`;
 
             includeTreeGlobals.outputChannel?.append(`${cmdString} ${eolCharacter}`);
 
@@ -57,6 +57,10 @@ export class Gcc implements Compiler {
 
                     const depth = match[1].length;
                     const name = match[2].trim();
+
+                    if (depth > configCache.maxIncludeDepth) {
+                        continue;
+                    }
 
                     const node: Include = new Include(vscode.Uri.file(name), []);
 
