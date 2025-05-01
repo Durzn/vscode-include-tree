@@ -8,5 +8,7 @@ export enum Commands {
 }
 
 export enum Settings {
-    SCANWORKSPACE = Constants.EXTENSION_NAME + '.scanWorkspaceForIncludes'
+    SCAN_WORKSPACE = Constants.EXTENSION_NAME + '.scanWorkspaceForIncludes',
+    EXTENSION_MODE = Constants.EXTENSION_NAME + '.extensionMode',
+    COMPILE_COMMANDS_PATH = Constants.EXTENSION_NAME + '.compileCommandsPath'
 }
