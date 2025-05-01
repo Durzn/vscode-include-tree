@@ -15,7 +15,7 @@ async function scanWorkspace() {
 
 	for (let workspace of workspaceFolders) {
 		for await (const file of FileSystemHandler.getFolders(workspace.uri, VALID_HEADER_EXTENSIONS)) {
-			foldersInWorkspaces.push(vscode.workspace.asRelativePath(file));
+			foldersInWorkspaces.push("./" + vscode.workspace.asRelativePath(file.fsPath));
 		}
 	}
 
