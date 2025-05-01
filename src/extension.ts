@@ -78,14 +78,26 @@ async function getIncludesOfFile(fileUri: vscode.Uri, extensionMode: ExtensionMo
 
 		let fileExtension = FileSystemHandler.getFileExtension(fileUri);
 		/* Header files are not listed in compile_commands.json and need special handling */
-		if (configCache.scanWorkspaceForIncludes || VALID_HEADER_EXTENSIONS.includes(fileExtension)) {
-			includes = includes.concat(includeTreeGlobals.workspaceIncludes);
+		if (VALID_HEADER_EXTENSIONS.includes(fileExtension)) {
+			/* H file */
+			if (configCache.scanWorkspaceForIncludes) {
+				includes = includes.concat(includeTreeGlobals.workspaceIncludes);
+			}
 		}
-		else if (includeTreeGlobals.parsedCompileCommandsJson !== undefined) {
-			for (let i = 0; i < includeTreeGlobals.parsedCompileCommandsJson.length; i++) {
-				let commandFile = vscode.Uri.file(includeTreeGlobals.parsedCompileCommandsJson[i].file);
-				if (commandFile.fsPath === fileUri.fsPath) {
-					includes = includes.concat(parseIncludesFromCommand(includeTreeGlobals.parsedCompileCommandsJson[i].command));
+		else {
+			/* C file */
+			if (includeTreeGlobals.parsedCompileCommandsJson === undefined) {
+				if (configCache.scanWorkspaceForIncludes) {
+					includes = includes.concat(includeTreeGlobals.workspaceIncludes);
+				}
+			}
+			else {
+				/* compile_commands exists => Use that */
+				for (let i = 0; i < includeTreeGlobals.parsedCompileCommandsJson.length; i++) {
+					let commandFile = vscode.Uri.file(includeTreeGlobals.parsedCompileCommandsJson[i].file);
+					if (commandFile.fsPath === fileUri.fsPath) {
+						includes = includes.concat(parseIncludesFromCommand(includeTreeGlobals.parsedCompileCommandsJson[i].command));
+					}
 				}
 			}
 		}
