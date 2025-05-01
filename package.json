@@ -2,7 +2,7 @@
   "name": "include-tree",
   "displayName": "Include Tree",
   "description": "Extension to visualize the include tree of given files.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": {
     "name": "durzn",
     "email": "dev@durzn.com"
