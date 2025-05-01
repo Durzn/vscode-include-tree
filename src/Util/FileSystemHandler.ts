@@ -1,26 +1,25 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { readdir } from 'fs/promises';
 
 
 export class FileSystemHandler {
 
     public static async* getFolders(dirUri: vscode.Uri, allowedFileExtensions: string[]): AsyncGenerator<vscode.Uri> {
-        /* TODO: Change to vscode.workspace.fs.readDirectory */
-        const files = await readdir(dirUri.fsPath, { withFileTypes: true, recursive: true });
-        for (const file of files) {
-            if (file.isDirectory()) {
-                const innerFiles = await readdir(file.path + "/" + file.name, { withFileTypes: true });
-                for (let innerFile of innerFiles) {
-                    const extension = path.extname(innerFile.name);
-                    if (allowedFileExtensions.includes(extension)) {
-                        yield vscode.Uri.file(file.path + "/" + file.name);
-                        break;
-                    }
-                }
+        const files: [string, vscode.FileType][] = await vscode.workspace.fs.readDirectory(dirUri);
+        const folders = files.filter((file) => file[1] === vscode.FileType.Directory);
+
+        for (let folder of folders) {
+            const folderUri = vscode.Uri.joinPath(dirUri, folder[0]);
+            const filesOfDir = await vscode.workspace.fs.readDirectory(folderUri);
+            const dirHasAllowedFiles = filesOfDir.some((file) => {
+                return allowedFileExtensions.includes(FileSystemHandler.getFileExtension(vscode.Uri.file(file[0])));
+            });
+            if (dirHasAllowedFiles) {
+                yield folderUri;
             }
-        }
+            FileSystemHandler.getFolders(folderUri, allowedFileExtensions);
+        };
     }
 
     public static getRelativePath(basePath: vscode.Uri, uri: vscode.Uri): string {
