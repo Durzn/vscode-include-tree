@@ -11,6 +11,8 @@ export default class ConfigCache {
     public maxIncludeDepth!: number;
     public scanWorkspaceForIncludes!: boolean;
     public additionalIncludes!: string[];
+    public resolvedCompileCommandsPath!: string;
+    public excludedIncludes!: string[];
 
     constructor() {
         this.configAccess = new ConfigAccess();
@@ -24,6 +26,8 @@ export default class ConfigCache {
         this.maxIncludeDepth = this.configAccess.getMaxIncludeDepth();
         this.scanWorkspaceForIncludes = this.configAccess.getScanWorkspaceForIncludes();
         this.additionalIncludes = this.configAccess.getAdditionalIncludes();
+        this.resolvedCompileCommandsPath = this.configAccess.getCompileCommandsPath();
+        this.excludedIncludes = this.configAccess.getExcludedIncludes();
     }
 }
 

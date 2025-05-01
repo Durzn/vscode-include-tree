@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { FileSystemHandler } from './Util/FileSystemHandler';
 
 export enum ExtensionMode {
     MANUAL = "manual",
@@ -32,6 +33,15 @@ export default class ConfigAccess {
 
     public getAdditionalIncludes(): string[] {
         return this.getConfiguration().get("additionalIncludes", []);
+    }
+
+    public getExcludedIncludes(): string[] {
+        return this.getConfiguration().get("excludedIncludes", []);
+    }
+
+    public getCompileCommandsPath(): string {
+        let path = this.getConfiguration().get("compileCommandsPath", "");
+        return FileSystemHandler.resolveWorkspaceFolder(path);
     }
 }
 

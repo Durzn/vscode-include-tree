@@ -49,6 +49,10 @@
             "default": "automatic",
             "description": "Mode to operate on. Automatic (default) shows the include tree of the currently active file in the editor. Manual always shows the tree explicitly requested by the user (via context menu in the file browser)."
           },
+          "include-tree.compileCommandsPath": {
+            "type": "string",
+            "description": "Path to a compile_commands.json. This will resolve includes paths for link targets. Note that header files are not listed here, and thus a separate option (either additionalIncludes or scanWorkspaceForIncludes) must be used in combination."
+          },
           "include-tree.compilerPath": {
             "type": "string",
             "description": "Full path to the compiler executable. Alternative: Use the compiler name (e.g. gcc), so the first occurrence in the path is taken."
@@ -60,12 +64,17 @@
           },
           "include-tree.scanWorkspaceForIncludes": {
             "type": "boolean",
-            "description": "Whether to automatically include all headers present in the vscode workspace.",
+            "description": "Whether to automatically include all headers present in the vscode workspace. Note that when this option is not used, header files will not be correctly resolved, as they are not listed in compile_commands.json files. You must specify all paths in the additionalIncludes settings then.",
             "default": true
           },
           "include-tree.additionalIncludes": {
             "type": "array",
             "description": "Includes paths to scan for header locations. Must be absolute paths.",
+            "default": []
+          },
+          "include-tree.excludedIncludes": {
+            "type": "array",
+            "description": "Paths not to scan for header locations. Must be absolute paths.",
             "default": []
           }
         }
