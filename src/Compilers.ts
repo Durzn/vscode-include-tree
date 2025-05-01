@@ -53,7 +53,7 @@ export class GenericCompiler implements Compiler {
 
                 const lines = output.split(eolCharacter);
                 for (const line of lines) {
-                    const match = line.match(/^(\.+)(.+)$/);
+                    const match = line.match(/^(\.+)\s(.+)$/);
                     if (!match) { continue; };
 
                     const depth = match[1].length;
