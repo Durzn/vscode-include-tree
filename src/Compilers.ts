@@ -7,12 +7,12 @@ import * as vscode from 'vscode';
 const { spawn } = require('child_process');
 
 export interface Compiler {
-    buildTree(fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined>;
+    buildTree(cwd: string, fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined>;
 }
 export class Dummy implements Compiler {
     constructor(private compilerPath: string) { }
 
-    async buildTree(fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined> {
+    async buildTree(cwd: string, fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined> {
         return undefined;
     }
 }
@@ -21,7 +21,7 @@ export class Dummy implements Compiler {
 export class GenericCompiler implements Compiler {
     constructor(private compilerPath: string) { }
 
-    async buildTree(fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined> {
+    async buildTree(cwd: string, fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined> {
         return new Promise((resolve, reject) => {
             const stack: { depth: number; node: Include }[] = [];
             const rootNodes: Include[] = [];
@@ -40,7 +40,7 @@ export class GenericCompiler implements Compiler {
 
             includeTreeGlobals.outputChannel?.append(`${cmdString} ${eolCharacter}`);
 
-            const prog = spawn(cmdString, [], { shell: true });
+            const prog = spawn(cmdString, [], { shell: true, cwd: cwd });
 
             prog.stderr.on('data', (data: any) => {
                 output += data.toString(); /* GCC outputs its output to stderr for whatever reason */
