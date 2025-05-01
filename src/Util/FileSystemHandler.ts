@@ -5,12 +5,12 @@ import * as path from 'path';
 
 export class FileSystemHandler {
 
-    public static async* getFolders(dirUri: vscode.Uri, allowedFileExtensions: string[]): AsyncGenerator<vscode.Uri> {
-        const files: [string, vscode.FileType][] = await vscode.workspace.fs.readDirectory(dirUri);
+    public static async* getFolders(rootDir: vscode.Uri, allowedFileExtensions: string[]): AsyncGenerator<vscode.Uri> {
+        const files: [string, vscode.FileType][] = await vscode.workspace.fs.readDirectory(rootDir);
         const folders = files.filter((file) => file[1] === vscode.FileType.Directory);
 
         for (let folder of folders) {
-            const folderUri = vscode.Uri.joinPath(dirUri, folder[0]);
+            const folderUri = vscode.Uri.joinPath(rootDir, folder[0]);
             const filesOfDir = await vscode.workspace.fs.readDirectory(folderUri);
             const dirHasAllowedFiles = filesOfDir.some((file) => {
                 return allowedFileExtensions.includes(FileSystemHandler.getFileExtension(vscode.Uri.file(file[0])));
@@ -18,7 +18,7 @@ export class FileSystemHandler {
             if (dirHasAllowedFiles) {
                 yield folderUri;
             }
-            FileSystemHandler.getFolders(folderUri, allowedFileExtensions);
+            yield* FileSystemHandler.getFolders(folderUri, allowedFileExtensions);
         };
     }
 
