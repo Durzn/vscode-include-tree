@@ -26,8 +26,8 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
                 'title': "Open file",
                 'command': "include-tree.open",
                 'tooltip': "Open file",
-                'arguments': [include.getAbsolutePath()]
-            }, vscode.ThemeIcon.File, vscode.Uri.file(include.getAbsolutePath()), collapsibleState));
+                'arguments': [include.fileUri]
+            }, vscode.ThemeIcon.File, include.fileUri, collapsibleState));
         }
         return Promise.resolve(elements);
     }
