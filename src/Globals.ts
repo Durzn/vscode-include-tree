@@ -1,10 +1,10 @@
-import { OutputChannel, Uri } from "vscode";
+import { OutputChannel } from "vscode";
 
 export default class Globals {
-    constructor(public outputChannel: OutputChannel | undefined = undefined) { }
+    constructor(public parsedCompileCommandsJson: any | undefined = undefined, public outputChannel: OutputChannel | undefined = undefined) { }
 
     workspaceIncludes: string[] = [];
-    
+
 }
 
 
