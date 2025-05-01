@@ -13,7 +13,7 @@ async function scanWorkspace() {
 
 	for (let workspace of workspaceFolders) {
 		for await (const file of FileSystemHandler.getFolders(workspace.uri, ['.h', '.hpp', '.hxx', '.hh'])) {
-			foldersInWorkspaces.push(file.fsPath);
+			foldersInWorkspaces.push(FileSystemHandler.getRelativePath(workspace.uri, file));
 		}
 	}
 
@@ -65,7 +65,9 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.window.registerTreeDataProvider(Constants.EXTENSION_NAME + '.includeTree', includeTreeDataProvider);
 	vscode.commands.registerCommand(Commands.SHOW, async (fileUri: vscode.Uri) => {
 		const compiler = configCache.compiler;
-		const includeTree = await compiler.buildTree(fileUri, includeTreeGlobals.workspaceIncludes.concat(configCache.additionalIncludes));
+		const cwd = vscode.workspace.getWorkspaceFolder(fileUri);
+		if (!cwd) { return; }
+		const includeTree = await compiler.buildTree(cwd.uri.fsPath, fileUri, includeTreeGlobals.workspaceIncludes.concat(configCache.additionalIncludes));
 		includeTreeDataProvider.setIncludeTree(includeTree);
 	});
 	vscode.commands.registerCommand(Constants.EXTENSION_NAME + '.open', (filePath: string) => {

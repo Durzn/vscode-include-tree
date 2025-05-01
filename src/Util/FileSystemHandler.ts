@@ -21,4 +21,9 @@ export class FileSystemHandler {
             }
         }
     }
+
+    public static getRelativePath(basePath: vscode.Uri, uri: vscode.Uri): string {
+        const pathSymbol = process.platform === 'win32' ? ".\\" : "./";
+        return pathSymbol + path.relative(basePath.fsPath, uri.fsPath);
+    }
 }
