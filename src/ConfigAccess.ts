@@ -32,11 +32,19 @@ export default class ConfigAccess {
     }
 
     public getAdditionalIncludes(): string[] {
-        return this.getConfiguration().get("additionalIncludes", []);
+        let paths =  this.getConfiguration().get("additionalIncludes", []);
+
+        return paths.map((path: string) => {
+            return FileSystemHandler.resolveWorkspaceFolder(path);
+        });
     }
 
     public getExcludedIncludes(): string[] {
-        return this.getConfiguration().get("excludedIncludes", []);
+        let paths =  this.getConfiguration().get("excludedIncludes", []);
+
+        return paths.map((path: string) => {
+            return FileSystemHandler.resolveWorkspaceFolder(path);
+        });
     }
 
     public getCompileCommandsPath(): string {
