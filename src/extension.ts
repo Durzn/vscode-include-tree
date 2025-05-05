@@ -63,6 +63,15 @@ async function onConfigChange(event: vscode.ConfigurationChangeEvent) {
 	}
 }
 
+function parseFileFromCommand(command: string): string {
+	const regex = /-c\s\S+/g;
+	const matches = command.match(regex);
+	if (!matches) {
+		return "";
+	}
+	return matches[0].slice(3, matches[0].length);
+}
+
 function parseIncludesFromCommand(command: string): string[] {
 	const regex = /-I\S+/g;
 	const matches = command.match(regex);
@@ -94,9 +103,11 @@ async function getIncludesOfFile(fileUri: vscode.Uri, extensionMode: ExtensionMo
 			else {
 				/* compile_commands exists => Use that */
 				for (let i = 0; i < includeTreeGlobals.parsedCompileCommandsJson.length; i++) {
-					let commandFile = vscode.Uri.file(includeTreeGlobals.parsedCompileCommandsJson[i].file);
+					const currentParameter = includeTreeGlobals.parsedCompileCommandsJson[i];
+					let commandFile = vscode.Uri.file(parseFileFromCommand(currentParameter.command));
 					if (commandFile.fsPath === fileUri.fsPath) {
-						includes = includes.concat(parseIncludesFromCommand(includeTreeGlobals.parsedCompileCommandsJson[i].command));
+						includes = includes.concat(parseIncludesFromCommand(currentParameter.command));
+						break;
 					}
 				}
 			}
