@@ -145,8 +145,8 @@ export function activate(context: vscode.ExtensionContext) {
 		const includeTree = await compiler.buildTree(cwd.uri.fsPath, fileUri, includesOfFile);
 		includeTreeDataProvider.setIncludeTree(includeTree);
 	});
-	vscode.commands.registerCommand(Constants.EXTENSION_NAME + '.open', (filePath: string) => {
-		vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePath));
+	vscode.commands.registerCommand(Constants.EXTENSION_NAME + '.open', (filePath: vscode.Uri) => {
+		vscode.commands.executeCommand('vscode.open', filePath);
 	});
 	vscode.commands.registerCommand(Commands.SCAN, async () => {
 		if (configCache.scanWorkspaceForIncludes) {
