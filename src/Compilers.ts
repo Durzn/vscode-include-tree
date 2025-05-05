@@ -1,3 +1,4 @@
+import path from "path";
 import { configCache } from "./ConfigCache";
 import { includeTreeGlobals } from "./Globals";
 import Include from "./Include";
@@ -57,12 +58,15 @@ export class GenericCompiler implements Compiler {
                     if (!match) { continue; };
 
                     const depth = match[1].length;
-                    const name = match[2].trim();
+                    let name = match[2].trim();
 
                     if (depth > configCache.maxIncludeDepth) {
                         continue;
                     }
 
+                    if (!path.isAbsolute(name)) {
+                        name = path.resolve(cwd, name);
+                    }
                     const node: Include = new Include(vscode.Uri.file(name), []);
 
                     // Clean up stack to match current depth
