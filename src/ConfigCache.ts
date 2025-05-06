@@ -13,6 +13,7 @@ export default class ConfigCache {
     public additionalIncludes!: string[];
     public resolvedCompileCommandsPath!: string;
     public excludedIncludes!: string[];
+    public cachedDirectories!: string[];
 
     constructor() {
         this.configAccess = new ConfigAccess();
@@ -28,6 +29,7 @@ export default class ConfigCache {
         this.additionalIncludes = this.configAccess.getAdditionalIncludes();
         this.resolvedCompileCommandsPath = this.configAccess.getCompileCommandsPath();
         this.excludedIncludes = this.configAccess.getExcludedIncludes();
+        this.cachedDirectories = this.configAccess.getCachedDirectories();
     }
 }
 

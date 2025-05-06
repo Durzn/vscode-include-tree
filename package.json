@@ -76,6 +76,11 @@
             "type": "array",
             "description": "Paths not to scan for header locations. Must be absolute paths.",
             "default": []
+          },
+          "include-tree.cachedDirectories": {
+            "type": "array",
+            "description": "Directories where include trees should be cached and not be re-created all the time.",
+            "default": []
           }
         }
       }

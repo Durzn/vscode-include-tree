@@ -51,6 +51,14 @@ export default class ConfigAccess {
         let path = this.getConfiguration().get("compileCommandsPath", "");
         return FileSystemHandler.resolveWorkspaceFolder(path);
     }
+
+    public getCachedDirectories(): string[] {
+        let paths = this.getConfiguration().get("cachedDirectories", []);
+
+        return paths.map((path: string) => {
+            return FileSystemHandler.resolveWorkspaceFolder(path);
+        });
+    }
 }
 
 export { ConfigAccess };
