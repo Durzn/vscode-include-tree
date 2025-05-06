@@ -107,6 +107,7 @@ async function getIncludesOfFile(fileUri: vscode.Uri, extensionMode: ExtensionMo
 					let commandFile = vscode.Uri.file(parseFileFromCommand(currentParameter.command));
 					if (commandFile.fsPath === fileUri.fsPath) {
 						includes = includes.concat(parseIncludesFromCommand(currentParameter.command));
+						/* If there are multiple targets in a compile_commands.json, they still hopefully have the same includes. */
 						break;
 					}
 				}
