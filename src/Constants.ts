@@ -5,7 +5,8 @@ export enum Constants {
 export enum Commands {
     SHOW = Constants.EXTENSION_NAME + '.show',
     SCAN = Constants.EXTENSION_NAME + '.scanWorkspace',
-    BUILD_CACHE = Constants.EXTENSION_NAME + '.createCache'
+    BUILD_CACHE = Constants.EXTENSION_NAME + '.createCache',
+    OPEN = Constants.EXTENSION_NAME + '.open'
 }
 
 export enum Settings {
