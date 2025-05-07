@@ -210,5 +210,9 @@ export function activate(context: vscode.ExtensionContext) {
 	onStartup();
 }
 
+setInterval(() => {
+	vscode.commands.executeCommand(Commands.SCAN);
+}, 5 * 60 * 1000 /* Scan once every 5 minutes */);
+
 // This method is called when your extension is deactivated
 export function deactivate() { }
