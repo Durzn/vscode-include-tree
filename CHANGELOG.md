@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Invalidating cache after changing settings
 - Commandline should now be able to handle longer input strings for compiler calls
 - Excluding folders is now recursive
+- Added a periodic scan of the workspace if enabled in the settings (currently fixed at once every 5 minutes)
 
 ## [1.3.0] - 2025-05-06
 
