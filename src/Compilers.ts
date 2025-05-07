@@ -5,8 +5,7 @@ import Include from "./Include";
 import IncludeTree from "./IncludeTree";
 import * as vscode from 'vscode';
 
-const { spawn } = require('child_process');
-
+import { spawn } from "child_process";
 export interface Compiler {
     buildTree(cwd: string, fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined>;
 }
@@ -41,7 +40,7 @@ export class GenericCompiler implements Compiler {
 
             includeTreeGlobals.outputChannel?.append(`${cmdString} ${eolCharacter}`);
 
-            const prog = spawn(cmdString, [], { shell: true, cwd: cwd });
+            const prog = spawn(this.compilerPath, ["-fsyntax-only", ...includeStrings, "-H", fileUri.fsPath], { cwd: cwd });
 
             prog.stderr.on('data', (data: any) => {
                 output += data.toString(); /* GCC outputs its output to stderr for whatever reason */
