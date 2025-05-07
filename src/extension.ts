@@ -118,8 +118,17 @@ async function getIncludesOfFile(fileUri: vscode.Uri, extensionMode: ExtensionMo
 			}
 		}
 		for (let exclude of configCache.excludedIncludes) {
-			let includeIndex = includes.findIndex((include) => { return vscode.Uri.file(include).fsPath === vscode.Uri.file(exclude).fsPath; });
-			if (includeIndex !== -1) { includes.splice(includeIndex, 1); }
+			let includeIndex = -1;
+			do {
+				exclude = FileSystemHandler.resolveWorkspaceFolder(exclude);
+				includeIndex = includes.findIndex((include) => {
+					const normalizedExclude = vscode.Uri.file(exclude).fsPath;
+					const normalizedInclude = vscode.Uri.file(include).fsPath;
+					const pathIncluded = normalizedInclude.includes(normalizedExclude);
+					return pathIncluded;
+				});
+				if (includeIndex !== -1) { includes.splice(includeIndex, 1); }
+			} while (includeIndex !== -1);
 		}
 
 		return resolve(includes);
