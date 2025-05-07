@@ -28,6 +28,7 @@ This extension contributes the following settings:
 | `include-tree.scanWorkspaceForIncludes`   | Whether to automatically include all headers present in the vscode workspace. Note that when this option is not used, header files will not be correctly resolved, as they are not listed in compile_commands.json files. You must specify all paths in the additionalIncludes settings then.  |
 | `include-tree.additionalIncludes`         | Includes paths to scan for header locations.                                                                                                                                                                     |
 | `include-tree.excludedIncludes`           | Paths not to scan for header locations. Must be absolute paths.                                                                                                                                                  |
+| `include-tree.cachedDirectories`          | Directories where include trees should be cached and not be re-created on demand. paths.                                                                                                                                                  |
 
 ## Known Issues
 

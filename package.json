@@ -79,7 +79,7 @@
           },
           "include-tree.cachedDirectories": {
             "type": "array",
-            "description": "Directories where include trees should be cached and not be re-created all the time.",
+            "description": "Directories where include trees should be cached and not be re-created on demand.",
             "default": []
           }
         }
