@@ -180,6 +180,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 	vscode.commands.registerCommand(Commands.BUILD_CACHE, async () => {
+		includeTreeGlobals.fileCache = new Map();
 		for (let directory of configCache.cachedDirectories) {
 			const directoryUri = vscode.Uri.file(directory);
 			let files = (await vscode.workspace.fs.readDirectory(directoryUri)).filter((file) => {
