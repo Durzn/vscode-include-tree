@@ -174,6 +174,16 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	vscode.window.registerTreeDataProvider(Constants.EXTENSION_NAME + '.includeTree', includeTreeDataProvider);
 	vscode.commands.registerCommand(Commands.SHOW, async (fileUri: vscode.Uri) => {
+		if (!fileUri) {
+			if (vscode.window.activeTextEditor) {
+				if (vscode.window.activeTextEditor.document.uri.scheme === "file") {
+					fileUri = vscode.window.activeTextEditor.document.uri;
+				}
+			}
+		}
+		if (!fileUri) {
+			return;
+		}
 		let includeTree = includeTreeGlobals.fileCache.get(fileUri.fsPath);
 		if (!includeTree) {
 			includeTree = await buildIncludeTree(fileUri);
