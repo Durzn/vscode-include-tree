@@ -102,6 +102,16 @@
           "command": "include-tree.scanWorkspace",
           "when": "view == include-tree.includeTree",
           "group": "navigation"
+        },
+        {
+          "command": "include-tree.expandAll",
+          "when": "view == include-tree.includeTree",
+          "group": "navigation"
+        },
+        {
+          "command": "include-tree.collapseAll",
+          "when": "view == include-tree.includeTree",
+          "group": "navigation"
         }
       ]
     },
@@ -122,6 +132,16 @@
         "command": "include-tree.scanWorkspace",
         "title": "Scan directories of the current workspace",
         "icon": "$(extensions-refresh)"
+      },
+      {
+        "command": "include-tree.expandAll",
+        "title": "Expand all nodes of the tree view.",
+        "icon": "$(search-expand-results)"
+      },
+      {
+        "command": "include-tree.collapseAll",
+        "title": "Collapse all nodes of the tree view.",
+        "icon": "$(debug-collapse-all)"
       }
     ]
   },

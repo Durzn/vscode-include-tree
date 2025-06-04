@@ -6,6 +6,7 @@ import { ExtensionMode } from './ConfigAccess';
 import { includeTreeGlobals } from './Globals';
 import { FileSystemHandler } from './Util/FileSystemHandler';
 import IncludeTree from './IncludeTree';
+import IncludeTreeItem from './TreeView/IncludeTreeItem';
 
 const VALID_HEADER_EXTENSIONS = ['.h', '.hpp', '.hxx', '.hh'];
 
@@ -166,13 +167,19 @@ export function activate(context: vscode.ExtensionContext) {
 
 	includeTreeGlobals.outputChannel = vscode.window.createOutputChannel(`${Constants.EXTENSION_NAME}`);
 	const includeTreeDataProvider = new IncludeTreeDataProvider();
+	const includeTreeView = vscode.window.createTreeView(Constants.EXTENSION_NAME + '.includeTree', { treeDataProvider: includeTreeDataProvider });
+	includeTreeView.onDidExpandElement(e => {
+		includeTreeDataProvider.setExpansionState(e.element.include.id, true);
+	});
+	includeTreeView.onDidCollapseElement(e => {
+		includeTreeDataProvider.setExpansionState(e.element.include.id, false);
+	});
 
 	vscode.workspace.onDidChangeConfiguration((event: vscode.ConfigurationChangeEvent) => {
 		if (event.affectsConfiguration(Constants.EXTENSION_NAME)) {
 			onConfigChange(event);
 		}
 	});
-	vscode.window.registerTreeDataProvider(Constants.EXTENSION_NAME + '.includeTree', includeTreeDataProvider);
 	vscode.commands.registerCommand(Commands.SHOW, async (fileUri: vscode.Uri) => {
 		if (!fileUri) {
 			if (vscode.window.activeTextEditor) {
@@ -191,7 +198,7 @@ export function activate(context: vscode.ExtensionContext) {
 		includeTreeDataProvider.setIncludeTree(includeTree);
 	});
 	vscode.commands.registerCommand(Commands.OPEN, (filePath: vscode.Uri) => {
-		vscode.commands.executeCommand('vscode.open', filePath);
+			vscode.commands.executeCommand('vscode.open', filePath);
 	});
 	vscode.commands.registerCommand(Commands.SCAN, async () => {
 		if (configCache.scanWorkspaceForIncludes) {
@@ -212,12 +219,33 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}
 	});
+	vscode.commands.registerCommand(Commands.COLLAPSE_TREE, async () => {
+		includeTreeDataProvider.clearExpansionState();
+		includeTreeDataProvider.refresh();
+		vscode.commands.executeCommand('workbench.actions.treeView.include-tree.includeTree.collapseAll');
+	});
+	vscode.commands.registerCommand(Commands.EXPAND_TREE, async () => {
+		const roots = await includeTreeDataProvider.getChildren(undefined);
+		for (const root of roots || []) {
+			await expandTree(includeTreeView, includeTreeDataProvider, root, true);
+		}
+	});
 
 	vscode.window.onDidChangeActiveTextEditor(onEditorChange);
 	vscode.workspace.onDidSaveTextDocument(onEditorChange);
 
 	/* Trigger extension on startup */
 	onStartup();
+}
+
+async function expandTree(includeTreeView: vscode.TreeView<IncludeTreeItem>, includeTreeDataProvider: IncludeTreeDataProvider, element: IncludeTreeItem, expandElement: boolean) {
+	await includeTreeView.reveal(element, { expand: expandElement });
+	const children = await includeTreeDataProvider.getChildren(element);
+	if (children) {
+		for (const child of children) {
+			await expandTree(includeTreeView, includeTreeDataProvider, child, expandElement);
+		}
+	}
 }
 
 setInterval(() => {

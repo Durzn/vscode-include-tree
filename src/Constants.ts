@@ -6,7 +6,9 @@ export enum Commands {
     SHOW = Constants.EXTENSION_NAME + '.show',
     SCAN = Constants.EXTENSION_NAME + '.scanWorkspace',
     BUILD_CACHE = Constants.EXTENSION_NAME + '.createCache',
-    OPEN = Constants.EXTENSION_NAME + '.open'
+    OPEN = Constants.EXTENSION_NAME + '.open',
+    COLLAPSE_TREE = Constants.EXTENSION_NAME + '.collapseAll',
+    EXPAND_TREE = Constants.EXTENSION_NAME + '.expandAll'
 }
 
 export enum Settings {
