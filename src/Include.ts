@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import * as Path from 'path';
+import { randomUUID } from 'crypto'
 
 export default class Include {
-    constructor(public fileUri: vscode.Uri, public includes: Include[] = []) { }
+    constructor(public fileUri: vscode.Uri, public includes: Include[] = [], public id = randomUUID(), public parent?: Include) { }
 
     public getFileName(): string {
         let returnString: string | undefined;
