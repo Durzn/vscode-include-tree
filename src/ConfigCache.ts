@@ -14,6 +14,7 @@ export default class ConfigCache {
     public resolvedCompileCommandsPath!: string;
     public excludedIncludes!: string[];
     public cachedDirectories!: string[];
+    public openFilesOnClick!: boolean;
 
     constructor() {
         this.configAccess = new ConfigAccess();
@@ -30,6 +31,7 @@ export default class ConfigCache {
         this.resolvedCompileCommandsPath = this.configAccess.getCompileCommandsPath();
         this.excludedIncludes = this.configAccess.getExcludedIncludes();
         this.cachedDirectories = this.configAccess.getCachedDirectories();
+        this.openFilesOnClick = this.configAccess.getOpenFilesOnClick();
     }
 }
 

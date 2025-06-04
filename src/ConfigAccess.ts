@@ -32,7 +32,7 @@ export default class ConfigAccess {
     }
 
     public getAdditionalIncludes(): string[] {
-        let paths =  this.getConfiguration().get("additionalIncludes", []);
+        let paths = this.getConfiguration().get("additionalIncludes", []);
 
         return paths.map((path: string) => {
             return FileSystemHandler.resolveWorkspaceFolder(path);
@@ -40,7 +40,7 @@ export default class ConfigAccess {
     }
 
     public getExcludedIncludes(): string[] {
-        let paths =  this.getConfiguration().get("excludedIncludes", []);
+        let paths = this.getConfiguration().get("excludedIncludes", []);
 
         return paths.map((path: string) => {
             return FileSystemHandler.resolveWorkspaceFolder(path);
@@ -58,6 +58,10 @@ export default class ConfigAccess {
         return paths.map((path: string) => {
             return FileSystemHandler.resolveWorkspaceFolder(path);
         });
+    }
+
+    public getOpenFilesOnClick(): boolean {
+        return this.getConfiguration().get("openFilesOnClick", true);
     }
 }
 

@@ -29,6 +29,7 @@ This extension contributes the following settings:
 | `include-tree.additionalIncludes`         | Includes paths to scan for header locations.                                                                                                                                                                     |
 | `include-tree.excludedIncludes`           | Paths not to scan for header locations. Must be absolute paths.                                                                                                                                                  |
 | `include-tree.cachedDirectories`          | Directories where include trees should be cached and not be re-created on demand. paths.                                                                                                                                                  |
+| `include-tree.openFilesOnClick`          | Whether to open files when clicking on them in the tree view. ATTENTION: Requires a restart of the extension to work. |
 
 ## Known Issues
 
