@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { randomUUID } from 'crypto'
+import { randomUUID } from 'crypto';
 
 export default class Include {
     constructor(public fileUri: vscode.Uri, public includes: Include[] = [], public id = randomUUID(), public parent?: Include) { }
