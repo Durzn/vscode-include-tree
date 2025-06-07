@@ -224,7 +224,7 @@ export function activate(context: vscode.ExtensionContext) {
 		includeTreeDataProvider.refresh();
 		vscode.commands.executeCommand('workbench.actions.treeView.include-tree.includeTree.collapseAll');
 	});
-	vscode.commands.registerCommand(Commands.EXPAND_TREE, async () => {
+	vscode.commands.registerCommand(Commands.EXPAND_TREE_1, async () => {
 		await expandTree(includeTreeView, includeTreeDataProvider, 1);
 	});
 

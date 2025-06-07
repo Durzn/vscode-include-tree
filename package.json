@@ -104,7 +104,7 @@
           "group": "navigation"
         },
         {
-          "command": "include-tree.expandAll",
+          "command": "include-tree.expandOne",
           "when": "view == include-tree.includeTree",
           "group": "navigation"
         },
@@ -134,8 +134,8 @@
         "icon": "$(extensions-refresh)"
       },
       {
-        "command": "include-tree.expandAll",
-        "title": "Expand all nodes of the tree view.",
+        "command": "include-tree.expandOne",
+        "title": "Expand all nodes of the tree view by one level.",
         "icon": "$(search-expand-results)"
       },
       {

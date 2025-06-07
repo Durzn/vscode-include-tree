@@ -8,7 +8,7 @@ export enum Commands {
     BUILD_CACHE = Constants.EXTENSION_NAME + '.createCache',
     OPEN = Constants.EXTENSION_NAME + '.open',
     COLLAPSE_TREE = Constants.EXTENSION_NAME + '.collapseAll',
-    EXPAND_TREE = Constants.EXTENSION_NAME + '.expandAll'
+    EXPAND_TREE_1 = Constants.EXTENSION_NAME + '.expandOne'
 }
 
 export enum Settings {
