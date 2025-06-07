@@ -225,10 +225,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.executeCommand('workbench.actions.treeView.include-tree.includeTree.collapseAll');
 	});
 	vscode.commands.registerCommand(Commands.EXPAND_TREE, async () => {
-		const roots = await includeTreeDataProvider.getChildren(undefined);
-		for (const root of roots || []) {
-			await expandTree(includeTreeView, includeTreeDataProvider, root, true);
-		}
+		await expandTree(includeTreeView, includeTreeDataProvider, 1);
 	});
 
 	vscode.window.onDidChangeActiveTextEditor(onEditorChange);
@@ -238,13 +235,10 @@ export function activate(context: vscode.ExtensionContext) {
 	onStartup();
 }
 
-async function expandTree(includeTreeView: vscode.TreeView<IncludeTreeItem>, includeTreeDataProvider: IncludeTreeDataProvider, element: IncludeTreeItem, expandElement: boolean) {
-	await includeTreeView.reveal(element, { select: false, expand: expandElement, focus: false });
-	const children = await includeTreeDataProvider.getChildren(element);
-	if (children) {
-		for (const child of children) {
-			await expandTree(includeTreeView, includeTreeDataProvider, child, expandElement);
-		}
+async function expandTree(includeTreeView: vscode.TreeView<IncludeTreeItem>, includeTreeDataProvider: IncludeTreeDataProvider, expand: boolean | number) {
+	const expandableElements = includeTreeDataProvider.getExpandableElements();
+	for (const element of expandableElements) {
+		await includeTreeView.reveal(element, { select: false, expand: expand, focus: false });
 	}
 }
 

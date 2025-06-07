@@ -21,9 +21,7 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
         if (element) {
             includes = element.include.includes;
         } else {
-            if (this.includeTree) {
-                includes = this.includeTree.rootNodes;
-            }
+            includes = this.getRootNodes();
         }
         const items = this.convertIncludesToIncludeTreeItems(includes);
         return Promise.resolve(items);
@@ -41,7 +39,12 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
         this._onDidChangeTreeData.fire();
     }
 
-    public setExpansionState(elementId: string, isExpanded: boolean) {
+    public getElementById(elementId: string): IncludeTreeItem | undefined {
+        return this.elements.find(element => element.include.id === elementId);
+    }
+
+
+    public setExpansionState(elementId: string, isExpanded: boolean): void {
         let element = this.elements.find(element => element.include.id === elementId);
         if (!element) { return; }
         if (isExpanded) {
@@ -60,8 +63,24 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
         this.includeTree = includeTree;
         if (includeTree) {
             this.elements = this.convertIncludesToIncludeTreeItems(includeTree.flatten());
+            this.clearExpansionState();
         }
         this.refresh();
+    }
+
+    public getExpandableElements(): IncludeTreeItem[] {
+        let expandableItems: IncludeTreeItem[] = this.convertIncludesToIncludeTreeItems(this.getRootNodes());
+        for (const id of this.expandedElements.values()) {
+            const element = this.getElementById(id);
+            if (!element) { continue; }
+
+            const items = element.include.includes.filter(elem => elem.includes.length > 0);
+
+            if (!items) { continue; }
+
+            expandableItems.push(...this.convertIncludesToIncludeTreeItems(items));
+        }
+        return expandableItems;
     }
 
     private convertIncludesToIncludeTreeItems(includes: Include[]): IncludeTreeItem[] {
@@ -84,6 +103,15 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
         }
 
         return items;
+    }
+
+    private getRootNodes(): Include[] {
+        let includes: Include[] = [];
+
+        if (this.includeTree) {
+            includes = this.includeTree.rootNodes;
+        }
+        return includes;
     }
 
     private _onDidChangeTreeData: vscode.EventEmitter<IncludeTreeItem | undefined | null | void> = new vscode.EventEmitter<IncludeTreeItem | undefined | null | void>();
