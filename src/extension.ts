@@ -198,7 +198,7 @@ export function activate(context: vscode.ExtensionContext) {
 		includeTreeDataProvider.setIncludeTree(includeTree);
 	});
 	vscode.commands.registerCommand(Commands.OPEN, (filePath: vscode.Uri) => {
-			vscode.commands.executeCommand('vscode.open', filePath);
+		vscode.commands.executeCommand('vscode.open', filePath);
 	});
 	vscode.commands.registerCommand(Commands.SCAN, async () => {
 		if (configCache.scanWorkspaceForIncludes) {
@@ -239,7 +239,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 async function expandTree(includeTreeView: vscode.TreeView<IncludeTreeItem>, includeTreeDataProvider: IncludeTreeDataProvider, element: IncludeTreeItem, expandElement: boolean) {
-	await includeTreeView.reveal(element, { expand: expandElement });
+	await includeTreeView.reveal(element, { select: false, expand: expandElement, focus: false });
 	const children = await includeTreeDataProvider.getChildren(element);
 	if (children) {
 		for (const child of children) {
