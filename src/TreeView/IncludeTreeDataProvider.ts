@@ -52,7 +52,7 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
         }
     }
 
-    public clearExpansionState() {
+    public clearExpansionState(): void {
         this.expandedElements.clear();
     }
 
