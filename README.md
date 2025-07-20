@@ -13,7 +13,20 @@ Extension to visualize the include tree of files.
 
 ## Requirements
 
-You must have a compiler (currently: gcc, g++, clang, clang++) installed and its path or its name must be set in the settings.
+You must have a compiler (currently: gcc, g++, clang, clang++) installed.
+Your version of these compilers must support both the -fsyntax-only and -H switches.
+
+## Getting Started
+
+The setup to get started with this extension is quite easy.
+All you have to do is set `include-tree.compilerPath` to one of the compilers mentioned in the requirements.
+The extension will try its best to resolve includes, but since native compiler settings (i.e. -fsyntax-only and -H switches) are used, all the extension can do is guess.
+The extension will parse the whole workspace for possible include files (and append them to the additional includes passed to the compiler) if `include-tree.scanWorkspaceForIncludes` is enabled.
+
+Should you get compile errors in the output channel, you will have to do one of the following things:
+
+1. (Recommended) Use a compile_commands.json as input for the extension via the `include-tree.compileCommandsPath` setting
+2. Manually add the missing include paths via the `include-tree.additionalIncludes` setting
 
 ## Extension Settings
 
