@@ -7,9 +7,9 @@ Extension to visualize the include tree of files.
 - Get a tree view with the include tree of either your open text files or of specifically chosen files
 - Clicking on a file in the Include Tree will open the file
 
-| Example                    | Description                               |
-| -------------------------- | ----------------------------------------- |
-|![](assets/example.png)     | Show include graph of a file              |
+| Example                    | Description                                                                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|![](assets/example.png)     | Show include graph of an opened file in a new VsCode view. See the parsed output of the compiler calls in a special VsCode output channel for the extension. |
 
 ## Requirements
 
@@ -20,13 +20,21 @@ Your version of these compilers must support both the -fsyntax-only and -H switc
 
 The setup to get started with this extension is quite easy.
 All you have to do is set `include-tree.compilerPath` to one of the compilers mentioned in the requirements.
-The extension will try its best to resolve includes, but since native compiler settings (i.e. -fsyntax-only and -H switches) are used, all the extension can do is guess.
+Then, you should be able to see an include tree in the VsCode view provided by the extension.
+If not, refer to the chapter [In-depth look on features](#in-depth-look-on-features)
+
+## In-depth look on features
+
+The extension will try its best to resolve includes, but since native compiler settings (i.e. -fsyntax-only and -H switches) are used, all the extension can do is guess. Its purpose is not to be yet another build system, but rely on compiler implementations.
 The extension will parse the whole workspace for possible include files (and append them to the additional includes passed to the compiler) if `include-tree.scanWorkspaceForIncludes` is enabled.
 
 Should you get compile errors in the output channel, you will have to do one of the following things:
 
 1. (Recommended) Use a compile_commands.json as input for the extension via the `include-tree.compileCommandsPath` setting
 2. Manually add the missing include paths via the `include-tree.additionalIncludes` setting
+
+To check that everything is working as expected, you can always open the output channel that is created by the extension. Both the call to the compiler
+and the output is redirected there.
 
 ## Extension Settings
 
