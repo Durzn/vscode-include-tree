@@ -146,27 +146,30 @@
     "commands": [
       {
         "command": "include-tree.show",
-        "title": "Show Include Tree"
+        "title": "Include Tree: Show Include Tree"
       },
       {
         "command": "include-tree.scanWorkspace",
-        "title": "Scan directories of the current workspace",
+        "title": "Include Tree: Scan directories of the current workspace",
         "icon": "$(extensions-refresh)"
       },
       {
         "command": "include-tree.expandOne",
-        "title": "Expand all nodes of the tree view by one level.",
-        "icon": "$(search-expand-results)"
+        "title": "Include Tree: Expand all nodes of the tree view by one level.",
+        "icon": "$(search-expand-results)",
+        "shortTitle": "Expand all nodes by one level"
       },
       {
         "command": "include-tree.collapseAll",
-        "title": "Collapse all nodes of the tree view.",
-        "icon": "$(debug-collapse-all)"
+        "title": "Include Tree: Collapse all nodes of the tree view.",
+        "icon": "$(debug-collapse-all)",
+        "shortTitle": "Collapse all nodes"
       },
       {
         "command": "include-tree.unpinFile",
-        "title": "Unpin the current file so it can be changed.",
-        "icon": "$(timeline-unpin)"
+        "title": "Include Tree: Unpin the current file so it can be changed.",
+        "icon": "$(timeline-unpin)",
+        "shortTitle": "Unpin file"
       },
       {
         "command": "include-tree.pinFile",
