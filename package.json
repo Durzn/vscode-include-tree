@@ -104,6 +104,16 @@
           "group": "navigation@1"
         },
         {
+          "command": "include-tree.whoAmIIncluding",
+          "when": "view == include-tree.includeTree && include-tree.treeMode == 'whoAmIIncluding'",
+          "group": "navigation@1"
+        },
+        {
+          "command": "include-tree.whoIsIncludingMe",
+          "when": "view == include-tree.includeTree && include-tree.treeMode == 'whoIsIncludingMe'",
+          "group": "navigation@1"
+        },
+        {
           "command": "include-tree.expandOne",
           "when": "view == include-tree.includeTree",
           "group": "navigation@2"
@@ -160,8 +170,19 @@
       },
       {
         "command": "include-tree.pinFile",
-        "title": "Pin the current file so it does not change until unpinned.",
-        "icon": "$(timeline-pin)"
+        "title": "Include Tree: Pin the current file so it does not change until unpinned.",
+        "icon": "$(timeline-pin)",
+        "shortTitle": "Pin file"
+      },
+      {
+        "command": "include-tree.whoAmIIncluding",
+        "title": "Include Tree: Currently showing which files this file is including. Click to switch view.",
+        "icon": "$(compare-changes)"
+      },
+      {
+        "command": "include-tree.whoIsIncludingMe",
+        "title": "Include Tree: Currently showing which files are including this file. Click to switch view.",
+        "icon": "$(compare-changes)"
       }
     ]
   },

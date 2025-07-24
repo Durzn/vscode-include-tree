@@ -1,5 +1,11 @@
-import { OutputChannel, Uri } from "vscode";
+import { OutputChannel } from "vscode";
 import IncludeTree from "./IncludeTree";
+
+
+export enum TreeMode {
+    WHOAMIINCLUDING = "whoAmIIncluding",
+    WHOISINCLUDINGME = "whoIsIncludingMe"
+}
 
 export default class Globals {
     constructor(public parsedCompileCommandsJson: any | undefined = undefined, public outputChannel: OutputChannel | undefined = undefined) { }
@@ -8,6 +14,7 @@ export default class Globals {
 
     fileCache: Map<string, IncludeTree | undefined> = new Map();
     isFilePinned: boolean = false;
+    treeMode: TreeMode = TreeMode.WHOAMIINCLUDING;
 
 }
 

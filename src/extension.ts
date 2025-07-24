@@ -3,16 +3,27 @@ import { configCache } from './ConfigCache';
 import IncludeTreeDataProvider from './TreeView/IncludeTreeDataProvider';
 import { Commands, Constants, Contexts, Settings } from './Constants';
 import { ExtensionMode } from './ConfigAccess';
-import { includeTreeGlobals } from './Globals';
+import { includeTreeGlobals, TreeMode } from './Globals';
 import { FileSystemHandler } from './Util/FileSystemHandler';
 import IncludeTree from './IncludeTree';
 import IncludeTreeItem from './TreeView/IncludeTreeItem';
+import Include from './Include';
 
-const VALID_HEADER_EXTENSIONS = ['.h', '.hpp', '.hxx', '.hh'];
+const VALID_HEADER_EXTENSIONS: string[] = ['.h', '.hpp', '.hxx', '.hh'];
+const VALID_SOURCE_EXTENSIONS: string[] = [];
+const includeTrees = new Map<string, IncludeTree>();
 
 function setPinState(pinned: boolean) {
 	vscode.commands.executeCommand('setContext', Contexts.PINNED, pinned);
 	includeTreeGlobals.isFilePinned = pinned;
+}
+
+function setTreeMode(mode: TreeMode, show: boolean = true) {
+	vscode.commands.executeCommand('setContext', Contexts.TREE_MODE, mode);
+	includeTreeGlobals.treeMode = mode;
+	if (show) {
+		vscode.commands.executeCommand(Commands.SHOW);
+	}
 }
 
 async function scanWorkspace() {
@@ -157,15 +168,41 @@ async function onStartup() {
 	await scanCompileCommands();
 	await vscode.commands.executeCommand(Commands.SCAN);
 	await vscode.commands.executeCommand(Commands.BUILD_CACHE);
+
+	setTreeMode(TreeMode.WHOAMIINCLUDING, false);
+	setPinState(false);
+
 	onEditorChange();
 }
 
+function getWhoIsIncludingMe(fileUri: vscode.Uri): IncludeTree {
+	let includingFiles = new Map<string, Include>();
+	for (const [uri, includeTree] of includeTrees) {
+		const matches = includeTree.flatten().filter((include) => {
+			return include.fileUri.fsPath === fileUri.fsPath;
+		});
+		for (const match of matches) {
+			if (match.parent) {
+				match.includes = [];
+				includingFiles.set(match.parent.fileUri.fsPath, match.parent);
+			}
+		}
+	}
+	return new IncludeTree([...includingFiles.values()]);
+}
+
 async function buildIncludeTree(fileUri: vscode.Uri): Promise<IncludeTree | undefined> {
-	const compiler = configCache.compiler;
-	const cwd = vscode.workspace.getWorkspaceFolder(fileUri);
-	if (!cwd) { return undefined; }
-	const includesOfFile = await getIncludesOfFile(fileUri, configCache.extensionMode);
-	const includeTree = await compiler.buildTree(cwd.uri.fsPath, fileUri, includesOfFile);
+	let includeTree = undefined;
+	if (includeTreeGlobals.treeMode === TreeMode.WHOAMIINCLUDING) {
+		const compiler = configCache.compiler;
+		const cwd = vscode.workspace.getWorkspaceFolder(fileUri);
+		if (!cwd) { return undefined; }
+		const includesOfFile = await getIncludesOfFile(fileUri, configCache.extensionMode);
+		includeTree = await compiler.buildTree(cwd.uri.fsPath, fileUri, includesOfFile);
+	}
+	else {
+		includeTree = getWhoIsIncludingMe(fileUri);
+	}
 
 	return includeTree;
 }
@@ -224,6 +261,9 @@ export function activate(context: vscode.ExtensionContext) {
 			for (let file of files) {
 				const fileUri = vscode.Uri.joinPath(directoryUri, file[0]);
 				const includeTree = await buildIncludeTree(fileUri);
+				if (includeTree) {
+					includeTrees.set(file[0], includeTree);
+				}
 				includeTreeGlobals.fileCache.set(fileUri.fsPath, includeTree);
 			}
 		}
@@ -241,6 +281,12 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	vscode.commands.registerCommand(Commands.UNPIN, () => {
 		setPinState(false);
+	});
+	vscode.commands.registerCommand(Commands.CHANGE_TO_WHO_AM_I_INCLUDING, () => {
+		setTreeMode(TreeMode.WHOAMIINCLUDING);
+	});
+	vscode.commands.registerCommand(Commands.CHANGE_TO_WHO_IS_INCLUDING_ME, () => {
+		setTreeMode(TreeMode.WHOISINCLUDINGME);
 	});
 
 
