@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { configCache } from './ConfigCache';
 import IncludeTreeDataProvider from './TreeView/IncludeTreeDataProvider';
-import { Commands, Constants, Settings } from './Constants';
+import { Commands, Constants, Contexts, Settings } from './Constants';
 import { ExtensionMode } from './ConfigAccess';
 import { includeTreeGlobals } from './Globals';
 import { FileSystemHandler } from './Util/FileSystemHandler';
@@ -9,6 +9,11 @@ import IncludeTree from './IncludeTree';
 import IncludeTreeItem from './TreeView/IncludeTreeItem';
 
 const VALID_HEADER_EXTENSIONS = ['.h', '.hpp', '.hxx', '.hh'];
+
+function setPinState(pinned: boolean) {
+	vscode.commands.executeCommand('setContext', Contexts.PINNED, pinned);
+	includeTreeGlobals.isFilePinned = pinned;
+}
 
 async function scanWorkspace() {
 	let workspaceFolders = vscode.workspace.workspaceFolders;
@@ -142,7 +147,9 @@ function onEditorChange() {
 		if (!vscode.window.activeTextEditor) { return; }
 		if (!vscode.window.activeTextEditor.document) { return; }
 		if (!allowedLanguages.includes(vscode.window.activeTextEditor.document.languageId)) { return; }
-		vscode.commands.executeCommand(Commands.SHOW, vscode.window.activeTextEditor.document.uri);
+		if (!includeTreeGlobals.isFilePinned) {
+			vscode.commands.executeCommand(Commands.SHOW, vscode.window.activeTextEditor.document.uri);
+		}
 	}
 }
 
@@ -229,6 +236,13 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand(Commands.EXPAND_TREE_1, async () => {
 		await expandTree(includeTreeView, includeTreeDataProvider, 1);
 	});
+	vscode.commands.registerCommand(Commands.PIN, () => {
+		setPinState(true);
+	});
+	vscode.commands.registerCommand(Commands.UNPIN, () => {
+		setPinState(false);
+	});
+
 
 	vscode.window.onDidChangeActiveTextEditor(onEditorChange);
 	vscode.workspace.onDidSaveTextDocument(onEditorChange);

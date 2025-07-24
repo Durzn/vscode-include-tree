@@ -7,6 +7,7 @@ export default class Globals {
     workspaceIncludes: string[] = [];
 
     fileCache: Map<string, IncludeTree | undefined> = new Map();
+    isFilePinned: boolean = false;
 
 }
 

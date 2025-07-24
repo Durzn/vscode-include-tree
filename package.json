@@ -101,17 +101,27 @@
         {
           "command": "include-tree.scanWorkspace",
           "when": "view == include-tree.includeTree",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
           "command": "include-tree.expandOne",
           "when": "view == include-tree.includeTree",
-          "group": "navigation"
+          "group": "navigation@2"
         },
         {
           "command": "include-tree.collapseAll",
           "when": "view == include-tree.includeTree",
-          "group": "navigation"
+          "group": "navigation@2"
+        },
+        {
+          "command": "include-tree.unpinFile",
+          "when": "view == include-tree.includeTree && include-tree.pinned",
+          "group": "navigation@3"
+        },
+        {
+          "command": "include-tree.pinFile",
+          "when": "view == include-tree.includeTree && !include-tree.pinned",
+          "group": "navigation@3"
         }
       ]
     },
@@ -142,6 +152,16 @@
         "command": "include-tree.collapseAll",
         "title": "Collapse all nodes of the tree view.",
         "icon": "$(debug-collapse-all)"
+      },
+      {
+        "command": "include-tree.unpinFile",
+        "title": "Unpin the current file so it can be changed.",
+        "icon": "$(timeline-unpin)"
+      },
+      {
+        "command": "include-tree.pinFile",
+        "title": "Pin the current file so it does not change until unpinned.",
+        "icon": "$(timeline-pin)"
       }
     ]
   },
