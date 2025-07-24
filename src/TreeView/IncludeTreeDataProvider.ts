@@ -90,14 +90,12 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
             const currentItemState = this.expandedElements.has(include.id) ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.Collapsed;
             const collapsibleState = include.includes.length === 0 ? vscode.TreeItemCollapsibleState.None : currentItemState;
             let command: vscode.TreeItem["command"] | undefined = undefined;
-            if (configCache.openFilesOnClick) {
-                command = {
-                    'title': "Open file",
-                    'command': "include-tree.open",
-                    'tooltip': "Open file",
-                    'arguments': [include.fileUri]
-                };
-            }
+            command = {
+                'title': "Open file",
+                'command': "include-tree.open",
+                'tooltip': "Open file",
+                'arguments': [include.fileUri]
+            };
             const item = new IncludeTreeItem(include, include.getFileName(), command, vscode.ThemeIcon.File, include.fileUri, collapsibleState);
             items.push(item);
         }
