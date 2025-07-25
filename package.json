@@ -84,7 +84,7 @@
           },
           "include-tree.openFilesOnClick": {
             "type": "boolean",
-            "description": "Whether to open files when clicking on them in the tree view. ATTENTION: Requires a restart of the extension to work.",
+            "description": "Whether to open files when clicking on them in the tree view.",
             "default": true
           }
         }
@@ -179,12 +179,12 @@
       },
       {
         "command": "include-tree.whoAmIIncluding",
-        "title": "Include Tree: Currently showing which files this file is including. Click to switch view.",
+        "title": "Currently showing which files this file is including. Click to switch view.",
         "icon": "$(arrow-swap)"
       },
       {
         "command": "include-tree.whoIsIncludingMe",
-        "title": "Include Tree: Currently showing which files are including this file. Click to switch view.",
+        "title": "Currently showing which files are including this file. Click to switch view.",
         "icon": "$(arrow-swap)"
       }
     ]
