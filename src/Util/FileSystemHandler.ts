@@ -56,3 +56,11 @@ export class FileSystemHandler {
         return path.extname(fileUri.fsPath);
     }
 }
+
+// Helper function to normalize file paths for comparison
+export function normalizePath(filePath: string): string {
+    // First resolve all relative components (., .., etc.)
+    const resolvedPath = require('path').resolve(filePath);
+    // Then normalize with VS Code's URI handling and convert to lowercase
+    return vscode.Uri.file(resolvedPath).fsPath.toLowerCase().replace(/\\/g, '/');
+}

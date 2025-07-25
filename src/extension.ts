@@ -4,7 +4,7 @@ import IncludeTreeDataProvider from './TreeView/IncludeTreeDataProvider';
 import { Commands, Constants, Contexts, Settings } from './Constants';
 import { ExtensionMode } from './ConfigAccess';
 import { includeTreeGlobals, TreeMode } from './Globals';
-import { FileSystemHandler } from './Util/FileSystemHandler';
+import { FileSystemHandler, normalizePath } from './Util/FileSystemHandler';
 import IncludeTree from './IncludeTree';
 import IncludeTreeItem from './TreeView/IncludeTreeItem';
 import Include from './Include';
