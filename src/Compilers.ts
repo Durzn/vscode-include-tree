@@ -51,6 +51,10 @@ export class GenericCompiler implements Compiler {
 
                 includeTreeGlobals.outputChannel?.append(output);
 
+                // Create the root node for the file we're analyzing
+                const rootNode = new Include(fileUri, []);
+                const stack: { depth: number; node: Include }[] = [{ depth: 0, node: rootNode }];
+
                 const lines = output.split(eolCharacter);
                 for (const line of lines) {
                     const match = line.match(/^(\.+)\s(.+)$/);
@@ -66,23 +70,26 @@ export class GenericCompiler implements Compiler {
                     if (!path.isAbsolute(name)) {
                         name = path.resolve(cwd, name);
                     }
+
+                    // Resolve any relative path components like ../..
+                    name = path.resolve(name);
+
                     const node: Include = new Include(vscode.Uri.file(name), []);
 
                     // Clean up stack to match current depth
-                    while (stack.length > 0 && stack[stack.length - 1].depth >= depth) {
+                    while (stack.length > 1 && stack[stack.length - 1].depth >= depth) {
                         stack.pop();
                     }
 
-                    if (stack.length === 0) {
-                        rootNodes.push(node);
-                    } else {
+                    // Add this node as a child of the current parent in the stack
+                    if (stack.length > 0) {
                         stack[stack.length - 1].node.includes.push(node);
                     }
 
                     stack.push({ depth, node });
                 }
 
-                return resolve(new IncludeTree(rootNodes));
+                return resolve(new IncludeTree([rootNode]));
             });
         });
     }

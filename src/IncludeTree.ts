@@ -1,14 +1,15 @@
 import Include from './Include';
+import * as vscode from 'vscode';
 
 
 export default class IncludeTree {
-    constructor(public rootNodes: Include[]) {
-        for (let node of this.rootNodes) {
+    constructor(public includes: Include[]) {
+        for (let node of this.includes) {
             this.setParent(node);
         }
     }
 
-    public flatten(nodes: Include[] = this.rootNodes): Include[] {
+    public flatten(nodes: Include[] = this.includes): Include[] {
         const includes = nodes.reduce((accumulator, node) => {
             accumulator.push(node);
             if (node.includes.length > 0) {

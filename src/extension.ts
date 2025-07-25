@@ -190,16 +190,8 @@ function getWhoIsIncludingMe(fileUri: vscode.Uri): IncludeTree {
 			}
 		}
 	}
-
-	return new IncludeTree([...includingFiles.values()]);
-}
-
-// Helper function to normalize file paths for comparison
-function normalizePath(filePath: string): string {
-	// First resolve all relative components (., .., etc.)
-	const resolvedPath = require('path').resolve(filePath);
-	// Then normalize with VS Code's URI handling and convert to lowercase
-	return vscode.Uri.file(resolvedPath).fsPath.toLowerCase().replace(/\\/g, '/');
+	const rootNode = new Include(fileUri, [...includingFiles.values()]);
+	return new IncludeTree([rootNode]);
 }
 
 // Helper function to find all files that directly include the target file
@@ -225,7 +217,7 @@ function findDirectIncluders(includeTree: IncludeTree, targetFilePath: string): 
 		}
 	}
 
-	searchIncludes(includeTree.rootNodes);
+	searchIncludes(includeTree.includes);
 	return includers;
 }
 
@@ -274,7 +266,7 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 		let includeTree = includeTreeGlobals.fileCache.get(fileUri.fsPath);
-		if (!includeTree || !includeTree.rootNodes || includeTreeGlobals.treeMode === TreeMode.WHOISINCLUDINGME) {
+		if (!includeTree || !includeTree.includes || includeTreeGlobals.treeMode === TreeMode.WHOISINCLUDINGME) {
 			includeTree = await buildIncludeTree(fileUri);
 		}
 		includeTreeDataProvider.setIncludeTree(includeTree);

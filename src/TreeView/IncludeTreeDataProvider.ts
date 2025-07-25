@@ -107,7 +107,7 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
         let includes: Include[] = [];
 
         if (this.includeTree) {
-            includes = this.includeTree.rootNodes;
+            includes = this.includeTree.includes[0].includes;
         }
         return includes;
     }
