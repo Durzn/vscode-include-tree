@@ -6,6 +6,8 @@ Extension to visualize the include tree of files.
 
 - Get a tree view with the include tree of either your open text files or of specifically chosen files
 - Clicking on a file in the Include Tree will open the file
+- Pin tree of current file
+- Two different views to switch between: View that shows the files the current file is including and view that shows the files that are including the current file
 
 | Example                    | Description                                                                                                                                                  |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -36,6 +38,28 @@ Should you get compile errors in the output channel, you will have to do one of 
 To check that everything is working as expected, you can always open the output channel that is created by the extension. Both the call to the compiler
 and the output is redirected there.
 
+## File caching
+
+Caching directories brings two benefits:
+- In the "Who am I including" view the tree does not need to be re-determined during runtime every time a file is selected
+- Enables the "Who is including me" view (tree is determined during runtime on each file click)
+
+### Views
+
+The "Who is including me" view only works for cached directories. Use the `include-tree.cachedDirectories` to include all the files you need this for.
+
+#### Who am I including
+
+Shows the tree from the view of the currently selected file.
+
+<img src="assets/whoAmIIncludingView.png" alt="image" width="300"/>  
+
+#### Who is including me
+
+Shows the tree from the view of the currently selected file. Only works on cached directories.
+
+<img src="assets/whoIsIncludingMeView.png" alt="image" width="300"/>  
+
 ## Extension Settings
 
 This extension contributes the following settings:
@@ -49,7 +73,7 @@ This extension contributes the following settings:
 | `include-tree.scanWorkspaceForIncludes`   | Whether to automatically include all headers present in the vscode workspace. Note that when this option is not used, header files will not be correctly resolved, as they are not listed in compile_commands.json files. You must specify all paths in the additionalIncludes settings then.  |
 | `include-tree.additionalIncludes`         | Includes paths to scan for header locations.                                                                                                                                                                     |
 | `include-tree.excludedIncludes`           | Paths not to scan for header locations. Must be absolute paths.                                                                                                                                                  |
-| `include-tree.cachedDirectories`          | Directories where include trees should be cached and not be re-created on demand. paths.                                                                                                                                                  |
+| `include-tree.cachedDirectories`          | Directories where include trees should be cached and not be re-created on demand. Accepts glob patterns like ${workspaceFolder}/**                                                                                                                                                  |
 | `include-tree.openFilesOnClick`          | Whether to open files when clicking on them in the tree view. Requires a restart of the extension to work. |
 
 ## Known Issues

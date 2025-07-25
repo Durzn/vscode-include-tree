@@ -33,7 +33,13 @@
     "viewsWelcome": [
       {
         "view": "include-tree.includeTree",
+        "when": "include-tree.treeMode == 'whoAmIIncluding'",
         "contents": "No includes found for the current file."
+      },
+      {
+        "view": "include-tree.includeTree",
+        "when": "include-tree.treeMode == 'whoIsIncludingMe'",
+        "contents": "No includes found for the current file. This view only works on cached directories. Make sure this is set accordingly in the settings."
       }
     ],
     "configuration": [
