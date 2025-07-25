@@ -290,20 +290,34 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 	vscode.commands.registerCommand(Commands.BUILD_CACHE, async () => {
-		includeTreeGlobals.fileCache = new Map();
-		for (let directory of configCache.cachedDirectories) {
-			const directoryUri = vscode.Uri.file(directory);
-			let files = (await vscode.workspace.fs.readDirectory(directoryUri)).filter((file) => {
-				return file[1] === vscode.FileType.File;
-			});
-			for (let file of files) {
-				const fileUri = vscode.Uri.joinPath(directoryUri, file[0]);
-				const includeTree = await buildIncludeTree(fileUri);
-				if (includeTree) {
-					includeTrees.set(fileUri.fsPath, includeTree);
+		try {
+			includeTreeGlobals.fileCache = new Map();
+			includeTrees.clear(); // Clear existing cache
+
+			// Get all resolved files from cached directories (including glob patterns)
+			const resolvedFiles = await configCache.configAccess.getResolvedCachedFiles(
+				VALID_HEADER_EXTENSIONS.concat(VALID_SOURCE_EXTENSIONS)
+			);
+
+			// Process each resolved file
+			for (const fileUri of resolvedFiles) {
+				try {
+					const includeTree = await buildIncludeTree(fileUri);
+					if (includeTree) {
+						includeTrees.set(fileUri.fsPath, includeTree);
+					}
+					includeTreeGlobals.fileCache.set(fileUri.fsPath, includeTree);
+				} catch (error) {
+					console.error(`Error processing file ${fileUri.fsPath}:`, error);
+					// Continue processing other files even if one fails
 				}
-				includeTreeGlobals.fileCache.set(fileUri.fsPath, includeTree);
 			}
+
+			console.log(`Cache built successfully with ${resolvedFiles.length} files processed.`);
+
+		} catch (error) {
+			console.error('Error building cache:', error);
+			vscode.window.showErrorMessage(`Failed to build include tree cache: ${error}`);
 		}
 	});
 	vscode.commands.registerCommand(Commands.COLLAPSE_TREE, async () => {
