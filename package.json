@@ -180,12 +180,12 @@
       {
         "command": "include-tree.whoAmIIncluding",
         "title": "Include Tree: Currently showing which files this file is including. Click to switch view.",
-        "icon": "$(compare-changes)"
+        "icon": "$(arrow-swap)"
       },
       {
         "command": "include-tree.whoIsIncludingMe",
         "title": "Include Tree: Currently showing which files are including this file. Click to switch view.",
-        "icon": "$(compare-changes)"
+        "icon": "$(arrow-swap)"
       }
     ]
   },
