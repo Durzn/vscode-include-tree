@@ -10,7 +10,7 @@ import IncludeTreeItem from './TreeView/IncludeTreeItem';
 import Include from './Include';
 
 const VALID_HEADER_EXTENSIONS: string[] = ['.h', '.hpp', '.hxx', '.hh'];
-const VALID_SOURCE_EXTENSIONS: string[] = [];
+const VALID_SOURCE_EXTENSIONS: string[] = ['.c', '.cpp', '.cxx', '.cc'];
 const includeTrees = new Map<string, IncludeTree>();
 
 function setPinState(pinned: boolean) {
