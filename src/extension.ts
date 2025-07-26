@@ -330,6 +330,7 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	vscode.commands.registerCommand(Commands.BUILD_CACHE, async () => {
 		includeTreeGlobals.cacheStatus = CacheStatus.BUILDING;
+		const newCache = new Map<string, IncludeTree>();
 
 		try {
 			includeTreeGlobals.includeTrees.clear();
@@ -351,7 +352,7 @@ export function activate(context: vscode.ExtensionContext) {
 					}
 					if (includeTree) {
 						const includeKey = getIncludeTreeCacheKey(fileUri.fsPath, includeTreeGlobals.treeMode);
-						includeTreeGlobals.includeTrees.set(includeKey, includeTree);
+						newCache.set(includeKey, includeTree);
 					}
 				} catch (error) {
 					console.error(`Error processing file ${fileUri.fsPath}:`, error);
@@ -365,6 +366,7 @@ export function activate(context: vscode.ExtensionContext) {
 			console.error('Error building cache:', error);
 			vscode.window.showErrorMessage(`Failed to build include tree cache: ${error}`);
 		}
+		includeTreeGlobals.includeTrees = newCache;
 		includeTreeGlobals.cacheStatus = CacheStatus.BUILT;
 	});
 	vscode.commands.registerCommand(Commands.COLLAPSE_TREE, async () => {
