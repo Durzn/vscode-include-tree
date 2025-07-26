@@ -331,8 +331,6 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand(Commands.BUILD_CACHE, async () => {
 		includeTreeGlobals.cacheStatus = CacheStatus.BUILDING;
 
-		const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-		await delay(10000);
 		try {
 			includeTreeGlobals.includeTrees.clear();
 
