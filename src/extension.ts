@@ -361,5 +361,16 @@ setInterval(() => {
 	vscode.commands.executeCommand(Commands.SCAN);
 }, 5 * 60 * 1000 /* Scan once every 5 minutes */);
 
+/**
+ * Periodically re-build the cache
+ * While this does not give instant feedback for changes, the overall experience with the extension should be better.
+ * FileWatchers on a potentially large amount of files can cause the system to run out of handles.
+ * FileWatchers are not guaranteed to throw an event on change, the OS may throw this even away.
+ * Includes of files should not change that often so it seems to be a worthy tradeoff.
+ */
+setInterval(() => {
+	vscode.commands.executeCommand(Commands.BUILD_CACHE);
+}, 2 * 60 * 1000 /* Scan once every 2 minutes */);
+
 // This method is called when your extension is deactivated
 export function deactivate() { }
