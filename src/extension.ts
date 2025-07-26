@@ -293,8 +293,8 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	vscode.commands.registerCommand(Commands.BUILD_CACHE, async () => {
 		try {
-			includeTreeGlobals.fileCache = new Map();
-			includeTrees.clear(); // Clear existing cache
+			includeTreeGlobals.fileCache.clear();
+			includeTrees.clear();
 
 			// Get all resolved files from cached directories (including glob patterns)
 			const resolvedFiles = await configCache.configAccess.getResolvedCachedFiles(
