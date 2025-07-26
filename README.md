@@ -1,6 +1,8 @@
 # include-tree README
 
-Extension to visualize the include tree of files.
+Extension to visualize the include tree of files. Gives you two separate views of include trees:
+- "Including / Who am I including" view
+- "Includer / Who includes this file" view
 
 ## Features
 
@@ -9,9 +11,11 @@ Extension to visualize the include tree of files.
 - Pin tree of current file
 - Two different views to switch between: View that shows the files the current file is including and view that shows the files that are including the current file
 
-| Example                    | Description                                                                                                                                                  |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|![](assets/example.png)     | Show include graph of an opened file in a new VsCode view. See the parsed output of the compiler calls in a special VsCode output channel for the extension. |
+# Support
+If you find this extension helpful, please consider supporting its development with a donation.  
+Your contributions help me maintain and improve the extension over time. Every bit is appreciated and keeps this project going.
+
+<a href='https://ko-fi.com/H2H4Q3C6N' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Requirements
 
@@ -24,6 +28,10 @@ The setup to get started with this extension is quite easy.
 All you have to do is set `include-tree.compilerPath` to one of the compilers mentioned in the requirements.
 Then, you should be able to see an include tree in the VsCode view provided by the extension.
 If not, refer to the chapter [In-depth look on features](#in-depth-look-on-features)
+
+| Example                    | Description                                                                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|![](assets/example.png)     | Show include graph of an opened file in a new VsCode view. See the parsed output of the compiler calls in a special VsCode output channel for the extension. |
 
 ## In-depth look on features
 
@@ -41,12 +49,21 @@ and the output is redirected there.
 ## File caching
 
 Caching directories brings two benefits:
-- In the "Who am I including" view the tree does not need to be re-determined during runtime every time a file is selected
-- Enables the "Who is including me" view (tree is determined during runtime on each file click)
+- The tree does not need to be re-determined during runtime every time a file is selected
+- Enables the "Who is including me" view
 
 ### Views
 
-The "Who is including me" view only works for cached directories. Use the `include-tree.cachedDirectories` to include all the files you need this for.
+The "Who is including me / Includers" view only works for cached directories. Use the `include-tree.cachedDirectories` to include all the files you need this for.  
+A sensible default here is the following, since usually the interesting files are somewhere within the workspace.
+
+```json
+{
+    "include-tree.cachedDirectories": [
+        "${workspaceFolder}/**"
+    ]
+}
+```
 
 #### Who am I including / Including View
 
@@ -82,11 +99,3 @@ None so far.
 
 # Feature requests and bug reports
 Please mail them to me at dev@durzn.com or create an issue in GitHub.
-
-# Support
-I'm working on projects like this extension in my free time. 
-If you want to buy me a coffee to keep me awake for more work on my projects, I'd greatly appreciate it.
-
-<a href='https://ko-fi.com/H2H4Q3C6N' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-
-I also gladly accept ``Ada`` over this address: ``addr1qyz4hp9a5m844c5dn7nz56vget0lcx2lxg9eg02x9nyg82m7306tyvjqygl08grv79tm2jw0sh9lg8nr5u0g0qvf2nlsw376z4``
