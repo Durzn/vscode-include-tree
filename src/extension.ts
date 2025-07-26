@@ -11,7 +11,6 @@ import Include from './Include';
 
 const VALID_HEADER_EXTENSIONS: string[] = ['.h', '.hpp', '.hxx', '.hh'];
 const VALID_SOURCE_EXTENSIONS: string[] = ['.c', '.cpp', '.cxx', '.cc'];
-const includeTrees = new Map<string, IncludeTree>();
 
 
 function setPinState(pinned: boolean) {
@@ -180,7 +179,7 @@ async function onStartup(includeTreeView: vscode.TreeView<IncludeTreeItem>) {
 function getWhoIsIncludingMe(fileUri: vscode.Uri): IncludeTree {
 	let includingFiles = new Map<string, Include>();
 
-	for (const [rootFileUri, includeTree] of includeTrees) {
+	for (const [rootFileUri, includeTree] of includeTreeGlobals.includeTrees) {
 		// Find all files in this tree that directly include our target file
 		const directIncluders = findDirectIncluders(includeTree, fileUri.fsPath);
 
@@ -294,7 +293,7 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand(Commands.BUILD_CACHE, async () => {
 		try {
 			includeTreeGlobals.fileCache.clear();
-			includeTrees.clear();
+			includeTreeGlobals.includeTrees.clear();
 
 			// Get all resolved files from cached directories (including glob patterns)
 			const resolvedFiles = await configCache.configAccess.getResolvedCachedFiles(
@@ -306,7 +305,7 @@ export function activate(context: vscode.ExtensionContext) {
 				try {
 					const includeTree = await buildIncludeTree(fileUri);
 					if (includeTree) {
-						includeTrees.set(fileUri.fsPath, includeTree);
+						includeTreeGlobals.includeTrees.set(fileUri.fsPath, includeTree);
 					}
 					includeTreeGlobals.fileCache.set(fileUri.fsPath, includeTree);
 				} catch (error) {

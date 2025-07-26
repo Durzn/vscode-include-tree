@@ -15,6 +15,7 @@ export default class Globals {
     fileCache: Map<string, IncludeTree | undefined> = new Map();
     isFilePinned: boolean = false;
     treeMode: TreeMode = TreeMode.WHOAMIINCLUDING;
+    includeTrees = new Map<string, IncludeTree>();
 
 }
 
