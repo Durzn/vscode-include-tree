@@ -7,7 +7,7 @@ export default class IncludeTreeItem extends vscode.TreeItem {
         public readonly label: string | vscode.TreeItemLabel,
         public readonly command: vscode.TreeItem["command"] | undefined,
         public readonly iconPath: vscode.ThemeIcon | undefined,
-        public readonly resourceUri: vscode.Uri,
+        public readonly resourceUri: vscode.Uri | undefined,
         public readonly collapsibleState?: vscode.TreeItemCollapsibleState
     ) {
         super(label, collapsibleState);
