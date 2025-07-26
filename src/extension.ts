@@ -3,7 +3,7 @@ import { configCache } from './ConfigCache';
 import IncludeTreeDataProvider from './TreeView/IncludeTreeDataProvider';
 import { Commands, Constants, Contexts, Settings } from './Constants';
 import { ExtensionMode } from './ConfigAccess';
-import { includeTreeGlobals, TreeMode } from './Globals';
+import { CacheStatus, includeTreeGlobals, TreeMode } from './Globals';
 import { FileSystemHandler, normalizePath } from './Util/FileSystemHandler';
 import IncludeTree from './IncludeTree';
 import IncludeTreeItem from './TreeView/IncludeTreeItem';
@@ -222,20 +222,42 @@ function findDirectIncluders(includeTree: IncludeTree, targetFilePath: string): 
 	return includers;
 }
 
-async function buildIncludeTree(fileUri: vscode.Uri): Promise<IncludeTree | undefined> {
-	let includeTree = undefined;
-	if (includeTreeGlobals.treeMode === TreeMode.WHOAMIINCLUDING) {
-		const compiler = configCache.compiler;
-		const cwd = vscode.workspace.getWorkspaceFolder(fileUri);
-		if (!cwd) { return undefined; }
-		const includesOfFile = await getIncludesOfFile(fileUri, configCache.extensionMode);
-		includeTree = await compiler.buildTree(cwd.uri.fsPath, fileUri, includesOfFile);
-	}
-	else {
-		includeTree = getWhoIsIncludingMe(fileUri);
-	}
+async function buildIncludeTreeIncluding(fileUri: vscode.Uri): Promise<IncludeTree | undefined> {
+	const compiler = configCache.compiler;
+	const cwd = vscode.workspace.getWorkspaceFolder(fileUri);
+	if (!cwd) { return undefined; }
+	const includesOfFile = await getIncludesOfFile(fileUri, configCache.extensionMode);
+	return await compiler.buildTree(cwd.uri.fsPath, fileUri, includesOfFile);
+}
 
+async function buildIncludeTreeIncluders(fileUri: vscode.Uri): Promise<IncludeTree | undefined> {
+	let includeTree = undefined;
+	let includingFiles = new Map<string, Include>();
+
+	for (const [rootFileUri, includeTree] of includeTreeGlobals.includeTrees) {
+		// Find all files in this tree that directly include our target file
+		const directIncluders = findDirectIncluders(includeTree, fileUri.fsPath);
+
+		for (const includer of directIncluders) {
+			// Use normalized path as the key to prevent duplicates
+			const normalizedKey = normalizePath(includer.fsPath);
+			if (!includingFiles.has(normalizedKey)) {
+				includingFiles.set(normalizedKey, new Include(includer));
+			}
+		}
+	}
+	const rootNode = new Include(fileUri, [...includingFiles.values()]);
+	if (rootNode.includes.length > 0) {
+		includeTree = new IncludeTree([rootNode]);
+	}
 	return includeTree;
+}
+
+async function buildIncludeTree(fileUri: vscode.Uri, mode: TreeMode) {
+	if (mode === TreeMode.WHOAMIINCLUDING) {
+		return buildIncludeTreeIncluding(fileUri);
+	}
+	return buildIncludeTreeIncluders(fileUri);
 }
 
 
@@ -244,6 +266,21 @@ function updateTreeViewTitle(includeTreeView: vscode.TreeView<IncludeTreeItem>) 
 		? "Including View"
 		: "Includers View";
 	includeTreeView.title = `Include Tree - ${modeText}`;
+}
+
+/**
+ * Create a composite key so IncludeTrees for all views can be stored
+ * @param filePath 
+ * @param mode 
+ * @returns 
+ */
+function getIncludeTreeCacheKey(filePath: string, mode: TreeMode): string {
+	return `${filePath}::${mode}`;
+}
+
+function getCachedTree(fileUri: vscode.Uri, mode: TreeMode): IncludeTree | undefined {
+	const key = getIncludeTreeCacheKey(fileUri.fsPath, mode);
+	return includeTreeGlobals.includeTrees.get(key);
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -274,9 +311,10 @@ export function activate(context: vscode.ExtensionContext) {
 		if (!fileUri) {
 			return;
 		}
-		let includeTree = includeTreeGlobals.fileCache.get(fileUri.fsPath);
-		if (!includeTree || !includeTree.includes || includeTreeGlobals.treeMode === TreeMode.WHOISINCLUDINGME) {
-			includeTree = await buildIncludeTree(fileUri);
+		const mode = includeTreeGlobals.treeMode;
+		let includeTree = getCachedTree(fileUri, mode);
+		if (!includeTree) {
+			includeTree = await buildIncludeTree(fileUri, mode);
 		}
 		includeTreeDataProvider.setIncludeTree(includeTree);
 	});
@@ -291,8 +329,11 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 	vscode.commands.registerCommand(Commands.BUILD_CACHE, async () => {
+		includeTreeGlobals.cacheStatus = CacheStatus.BUILDING;
+
+		const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+		await delay(10000);
 		try {
-			includeTreeGlobals.fileCache.clear();
 			includeTreeGlobals.includeTrees.clear();
 
 			// Get all resolved files from cached directories (including glob patterns)
@@ -303,11 +344,17 @@ export function activate(context: vscode.ExtensionContext) {
 			// Process each resolved file
 			for (const fileUri of resolvedFiles) {
 				try {
-					const includeTree = await buildIncludeTree(fileUri);
-					if (includeTree) {
-						includeTreeGlobals.includeTrees.set(fileUri.fsPath, includeTree);
+					let includeTree = undefined;
+					if (includeTreeGlobals.treeMode === TreeMode.WHOISINCLUDINGME) {
+						includeTree = await buildIncludeTreeIncluders(fileUri);
 					}
-					includeTreeGlobals.fileCache.set(fileUri.fsPath, includeTree);
+					else {
+						includeTree = await buildIncludeTreeIncluding(fileUri);
+					}
+					if (includeTree) {
+						const includeKey = getIncludeTreeCacheKey(fileUri.fsPath, includeTreeGlobals.treeMode);
+						includeTreeGlobals.includeTrees.set(includeKey, includeTree);
+					}
 				} catch (error) {
 					console.error(`Error processing file ${fileUri.fsPath}:`, error);
 					// Continue processing other files even if one fails
@@ -320,6 +367,7 @@ export function activate(context: vscode.ExtensionContext) {
 			console.error('Error building cache:', error);
 			vscode.window.showErrorMessage(`Failed to build include tree cache: ${error}`);
 		}
+		includeTreeGlobals.cacheStatus = CacheStatus.BUILT;
 	});
 	vscode.commands.registerCommand(Commands.COLLAPSE_TREE, async () => {
 		includeTreeDataProvider.clearExpansionState();

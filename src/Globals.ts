@@ -7,15 +7,22 @@ export enum TreeMode {
     WHOISINCLUDINGME = "whoIsIncludingMe"
 }
 
+export enum CacheStatus {
+    OFF,
+    BUILDING,
+    BUILT
+}
+
 export default class Globals {
     constructor(public parsedCompileCommandsJson: any | undefined = undefined, public outputChannel: OutputChannel | undefined = undefined) { }
 
     workspaceIncludes: string[] = [];
 
-    fileCache: Map<string, IncludeTree | undefined> = new Map();
     isFilePinned: boolean = false;
     treeMode: TreeMode = TreeMode.WHOAMIINCLUDING;
     includeTrees = new Map<string, IncludeTree>();
+
+    cacheStatus = CacheStatus.OFF;
 
 }
 
