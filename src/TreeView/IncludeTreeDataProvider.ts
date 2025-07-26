@@ -17,7 +17,7 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
     }
 
     public getChildren(element?: IncludeTreeItem): Thenable<IncludeTreeItem[]> {
-        if (includeTreeGlobals.cacheStatus === CacheStatus.BUILDING && !element) {
+        if (includeTreeGlobals.cacheStatus === CacheStatus.BUILDING && !element && includeTreeGlobals.includeTrees.size === 0) {
             const loadingItem = this.createLoadingItem();
             return Promise.resolve([loadingItem]);
         }
