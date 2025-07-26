@@ -48,13 +48,13 @@ Caching directories brings two benefits:
 
 The "Who is including me" view only works for cached directories. Use the `include-tree.cachedDirectories` to include all the files you need this for.
 
-#### Who am I including
+#### Who am I including / Including View
 
 Shows the tree from the view of the currently selected file.
 
 <img src="assets/whoAmIIncludingView.png" alt="image" width="300"/>  
 
-#### Who is including me
+#### Who is including me / Includers View
 
 Shows the includers of this file. Only works on cached directories.
 
