@@ -13,14 +13,16 @@ const VALID_HEADER_EXTENSIONS: string[] = ['.h', '.hpp', '.hxx', '.hh'];
 const VALID_SOURCE_EXTENSIONS: string[] = ['.c', '.cpp', '.cxx', '.cc'];
 const includeTrees = new Map<string, IncludeTree>();
 
+
 function setPinState(pinned: boolean) {
 	vscode.commands.executeCommand('setContext', Contexts.PINNED, pinned);
 	includeTreeGlobals.isFilePinned = pinned;
 }
 
-function setTreeMode(mode: TreeMode, show: boolean = true) {
+function setTreeMode(includeTreeView: vscode.TreeView<IncludeTreeItem>, mode: TreeMode, show: boolean = true) {
 	vscode.commands.executeCommand('setContext', Contexts.TREE_MODE, mode);
 	includeTreeGlobals.treeMode = mode;
+	updateTreeViewTitle(includeTreeView);
 	if (show) {
 		vscode.commands.executeCommand(Commands.SHOW);
 	}
@@ -164,8 +166,8 @@ function onEditorChange() {
 	}
 }
 
-async function onStartup() {
-	setTreeMode(TreeMode.WHOAMIINCLUDING, false);
+async function onStartup(includeTreeView: vscode.TreeView<IncludeTreeItem>) {
+	setTreeMode(includeTreeView, TreeMode.WHOAMIINCLUDING, false);
 	setPinState(false);
 
 	await scanCompileCommands();
@@ -235,6 +237,14 @@ async function buildIncludeTree(fileUri: vscode.Uri): Promise<IncludeTree | unde
 	}
 
 	return includeTree;
+}
+
+
+function updateTreeViewTitle(includeTreeView: vscode.TreeView<IncludeTreeItem>) {
+	const modeText = includeTreeGlobals.treeMode === TreeMode.WHOAMIINCLUDING
+		? "Including View"
+		: "Includers View";
+	includeTreeView.title = `Include Tree - ${modeText}`;
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -327,10 +337,10 @@ export function activate(context: vscode.ExtensionContext) {
 		setPinState(false);
 	});
 	vscode.commands.registerCommand(Commands.CHANGE_TO_WHO_AM_I_INCLUDING, () => {
-		setTreeMode(TreeMode.WHOAMIINCLUDING);
+		setTreeMode(includeTreeView, TreeMode.WHOAMIINCLUDING);
 	});
 	vscode.commands.registerCommand(Commands.CHANGE_TO_WHO_IS_INCLUDING_ME, () => {
-		setTreeMode(TreeMode.WHOISINCLUDINGME);
+		setTreeMode(includeTreeView, TreeMode.WHOISINCLUDINGME);
 	});
 
 
@@ -338,7 +348,7 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.workspace.onDidSaveTextDocument(onEditorChange);
 
 	/* Trigger extension on startup */
-	onStartup();
+	onStartup(includeTreeView);
 }
 
 async function expandTree(includeTreeView: vscode.TreeView<IncludeTreeItem>, includeTreeDataProvider: IncludeTreeDataProvider, expand: boolean | number) {
