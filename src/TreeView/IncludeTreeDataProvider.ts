@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import IncludeTree from '../IncludeTree';
 import Include from '../Include';
 import IncludeTreeItem from './IncludeTreeItem';
-import { configCache } from '../ConfigCache';
+import { CacheStatus, includeTreeGlobals } from '../Globals';
 
 export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<IncludeTreeItem> {
     private elements: IncludeTreeItem[] = [];
@@ -17,6 +17,11 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
     }
 
     public getChildren(element?: IncludeTreeItem): Thenable<IncludeTreeItem[]> {
+        if (includeTreeGlobals.cacheStatus === CacheStatus.BUILDING && !element) {
+            const loadingItem = this.createLoadingItem();
+            return Promise.resolve([loadingItem]);
+        }
+
         let includes: Include[] = [];
         if (element) {
             includes = element.include.includes;
@@ -111,6 +116,21 @@ export default class IncludeTreeDataProvider implements vscode.TreeDataProvider<
         }
         return includes;
     }
+
+    private createLoadingItem(): IncludeTreeItem {
+        // Create a dummy Include object for the loading state
+        const fakeInclude = new Include(vscode.Uri.parse(''));
+
+        return new IncludeTreeItem(
+            fakeInclude,
+            'Loading...',
+            undefined, // No command for loading item
+            new vscode.ThemeIcon('loading~spin'), // Use spinning loading icon
+            undefined, // No resource URI
+            vscode.TreeItemCollapsibleState.None
+        );
+    }
+
 
     private _onDidChangeTreeData: vscode.EventEmitter<IncludeTreeItem | undefined | null | void> = new vscode.EventEmitter<IncludeTreeItem | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<IncludeTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
