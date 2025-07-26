@@ -56,7 +56,7 @@ Shows the tree from the view of the currently selected file.
 
 #### Who is including me
 
-Shows the tree from the view of the currently selected file. Only works on cached directories.
+Shows the includers of this file. Only works on cached directories.
 
 <img src="assets/whoIsIncludingMeView.png" alt="image" width="300"/>  
 

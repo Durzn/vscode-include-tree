@@ -85,7 +85,7 @@
           },
           "include-tree.cachedDirectories": {
             "type": "array",
-            "description": "Directories where include trees should be cached and not be re-created on demand.",
+            "description": "Directories where include trees should be cached and not be re-created on demand. Must be set for 'whoIsIncludingMe' view. Accepts glob patterns.",
             "default": []
           },
           "include-tree.openFilesOnClick": {
