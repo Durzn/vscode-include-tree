@@ -23,7 +23,7 @@ export default class ConfigCache {
 
     public onConfigChange() {
         /* Config parameters */
-        this.compiler = getCompilerFromPath(this.configAccess.getCompilerPath());
+        this.compiler = getCompilerFromPath(this.configAccess.getCompilerPath(), this.configAccess.getCompilerOpts());
         this.extensionMode = this.configAccess.getExtensionMode();
         this.maxIncludeDepth = this.configAccess.getMaxIncludeDepth();
         this.scanWorkspaceForIncludes = this.configAccess.getScanWorkspaceForIncludes();
@@ -35,12 +35,12 @@ export default class ConfigCache {
     }
 }
 
-function getCompilerFromPath(path: string) {
+function getCompilerFromPath(path: string, additionalCompilerOpts: string) {
     if (path.includes("clang++.exe") || path === "clang++" || path.includes("clang.exe") || path === "clang") {
-        return new GenericCompiler(path);
+        return new GenericCompiler(path, additionalCompilerOpts);
     }
     else if (path.includes("g++.exe") || path === "g++" || path.includes("gcc.exe") || path === "gcc") {
-        return new GenericCompiler(path);
+        return new GenericCompiler(path, additionalCompilerOpts);
     }
 
     return new Dummy(path);

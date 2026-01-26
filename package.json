@@ -63,6 +63,10 @@
             "type": "string",
             "description": "Full path to the compiler executable. Alternative: Use the compiler name (e.g. gcc), so the first occurrence in the path is taken."
           },
+          "include-tree.compilerOpts": {
+            "type": "string",
+            "description": "Additional options to pass to the compiler when querying for include paths."
+          },
           "include-tree.maxIncludeDepth": {
             "type": "integer",
             "description": "The max include depth to scan. Beware of circular inclusions.",
@@ -213,6 +217,7 @@
     "@types/vscode": "^1.99.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/shell-quote": "^1.1.0",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "@typescript-eslint/parser": "^8.28.0",
     "eslint": "^9.23.0",

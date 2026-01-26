@@ -18,6 +18,10 @@ export default class ConfigAccess {
         return this.getConfiguration().get("compilerPath", "");
     }
 
+    public getCompilerOpts(): string {
+        return this.getConfiguration().get("compilerOpts", "");
+    }
+
     public getExtensionMode(): ExtensionMode {
         const config = this.getConfiguration();
         let extensionMode: string = config.get("extensionMode", ExtensionMode.AUTOMATIC);
