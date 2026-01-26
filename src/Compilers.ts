@@ -4,6 +4,7 @@ import { includeTreeGlobals } from "./Globals";
 import Include from "./Include";
 import IncludeTree from "./IncludeTree";
 import * as vscode from 'vscode';
+import { parse } from "shell-quote";
 
 import { spawn } from "child_process";
 export interface Compiler {
@@ -19,7 +20,7 @@ export class Dummy implements Compiler {
 
 /* Both Gcc and clang accept the same -H flag => No distinction necessary. */
 export class GenericCompiler implements Compiler {
-    constructor(private compilerPath: string) { }
+    constructor(private compilerPath: string, private compilerOpts: string) { }
 
     async buildTree(cwd: string, fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined> {
         return new Promise((resolve, reject) => {
@@ -36,12 +37,12 @@ export class GenericCompiler implements Compiler {
                 includeStrings.push(`-I${includeUri}`);
             }
 
-            const cmdString = `${this.compilerPath} -fsyntax-only ${includeStrings.join(" ")} -H ${fileUri.fsPath}`;
+            const cmdString = `${this.compilerPath} ${this.compilerOpts} -fsyntax-only ${includeStrings.join(" ")} -H ${fileUri.fsPath}`;
 
             includeTreeGlobals.outputChannel?.append(`${cmdString} ${eolCharacter}`);
 
-            const prog = spawn(this.compilerPath, ["-fsyntax-only", ...includeStrings, "-H", fileUri.fsPath], { cwd: cwd });
-
+            const additionalCompilerOpts = parse(this.compilerOpts).map(String);
+            const prog = spawn(this.compilerPath, [...additionalCompilerOpts, "-fsyntax-only", ...includeStrings, "-H", fileUri.fsPath], { cwd: cwd });
             prog.stderr.on('data', (data: any) => {
                 output += data.toString(); /* GCC outputs its output to stderr for whatever reason */
             });
