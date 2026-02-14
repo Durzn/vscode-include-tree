@@ -36,10 +36,10 @@ export default class ConfigCache {
 }
 
 function getCompilerFromPath(path: string) {
-    if (path.includes("clang++.exe") || path === "clang++" || path.includes("clang.exe") || path === "clang") {
+    if (path.includes("clang") || path.includes("clang++")) {
         return new GenericCompiler(path);
     }
-    else if (path.includes("g++.exe") || path === "g++" || path.includes("gcc.exe") || path === "gcc") {
+    else if (path.includes("gcc") || path.includes("g++")) {
         return new GenericCompiler(path);
     }
 
