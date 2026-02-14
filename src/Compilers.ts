@@ -13,6 +13,8 @@ export class Dummy implements Compiler {
     constructor(private compilerPath: string) { }
 
     async buildTree(cwd: string, fileUri: vscode.Uri, additionalIncludeUris: string[]): Promise<IncludeTree | undefined> {
+        includeTreeGlobals.outputChannel?.clear();
+        includeTreeGlobals.outputChannel?.appendLine(`Compiler was not recognized or is not supported. Read "${this.compilerPath}"`);
         return undefined;
     }
 }
